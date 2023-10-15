@@ -34,8 +34,7 @@ const index = () => {
   const handleNext = () => {
     if (currentIndex === slides.length - 1) {
       // Navigate to login page
-        router.push('/login');
-   
+      router.push("/login");
     } else {
       setCurrentIndex(currentIndex + 1);
     }
@@ -52,9 +51,7 @@ const index = () => {
           {/* <Link href="/login" >
             
             </Link> */}
-            {/* when the button turns get started navigate the user to the login page like top */}
-
-
+          {/* when the button turns get started navigate the user to the login page like top */}
         </Text>
       </TouchableOpacity>
     </View>

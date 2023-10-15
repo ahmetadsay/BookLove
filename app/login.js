@@ -7,17 +7,18 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
+import { router } from "expo-router";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    // handle login logic here
+   
   };
 
   const handleSignup = () => {
-    // handle signup logic here
+    router.push("/signUpForm");
   };
 
   const getRandomColor = () => {
