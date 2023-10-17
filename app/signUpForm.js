@@ -10,6 +10,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import firebaseConfig from "../firebase/firebase";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -25,6 +27,21 @@ const signUpSchema = Yup.object().shape({
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+  const handleSubmit = async (values) => {
+    const auth = getAuth();
+    try {
+        const { email, password } = values;
+        await createUserWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // handle error
+      }
+    }
+
+
 
   return (
     <View style={styles.container}>
@@ -42,7 +59,7 @@ const SignUpForm = () => {
           agreeToTerms: false, // add new field for checkbox
         }}
         validationSchema={signUpSchema}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={handleSubmit}
       >
         {({
           handleChange,
