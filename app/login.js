@@ -8,17 +8,35 @@ import {
   StyleSheet,
 } from "react-native";
 import { router } from "expo-router";
+import { getAuth,  signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorText, setErrorText] = useState("");
+
+
 
   const handleLogin = () => {
-    // add logic here to log in user
-    router.push("/home");
-    // router.push("/home");
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        router.push("/home");
 
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = 'Invalid email or password'
+        setErrorText(errorMessage);
+      });
     
+
+
+   
+
   };
 
   const handleSignup = () => {
@@ -64,6 +82,12 @@ const Login = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
+        <TouchableOpacity>
+          <Text style={styles.forgotPassword}>Forgot Password?</Text>
+        </TouchableOpacity>
+    
+
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
