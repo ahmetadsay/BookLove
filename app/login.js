@@ -14,7 +14,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-   
+    // add logic here to log in user
+    router.push("/home");
+    // router.push("/home");
+
+    
   };
 
   const handleSignup = () => {
