@@ -1,98 +1,209 @@
-// import React, { useState } from 'react';
-// import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Switch,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { Image } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
-// const ProfilePage = () => {
-//   const [user, setUser] = useState({
-//     name: 'John Doe',
-//     currentlyReading: [
-//       { title: 'Book 1', author: 'Author 1' },
-//       { title: 'Book 2', author: 'Author 2' },
-//     ],
-//     toRead: [
-//       { title: 'Book 3', author: 'Author 3' },
-//       { title: 'Book 4', author: 'Author 4' },
-//     ],
-//     friends: [
-//       { name: 'Friend 1' },
-//       { name: 'Friend 2' },
-//     ],
-//   });
+const ProfilePage = () => {
+  const [user, setUser] = useState({
+    name: "John Doe",
+    currentlyReading: [
+      { title: "Book 1", author: "Author 1" },
+      { title: "Book 2", author: "Author 2" },
+    ],
+    toRead: [
+      { title: "Book 3", author: "Author 3" },
+      { title: "Book 4", author: "Author 4" },
+    ],
+    friends: [{ name: "Friend 1" }, { name: "Friend 2" }],
+    booksRead: 5,
+    wordsSaved: 1000,
+    // Add achievements and badges here
+    achievements: [
+      "Bookworm Badge",
+      "Reading Challenge Champion",
+      "Top Reviewer",
+    ],
+    isPublic: true,
+    activityVisibility: "Friends",
+  });
 
-//   // Add trending profile functionality here (e.g., achievements, statistics, etc.)
+  const togglePrivacy = () => {
+    setUser({ ...user, isPublic: !user.isPublic });
+  };
 
-//   return (
-//     <ScrollView>
-//       <View style={styles.container}>
-//         <Text style={styles.profileName}>{user.name}</Text>
-//       </View>
+  const handleVisibilityChange = (value) => {
+    setUser({ ...user, activityVisibility: value });
+  };
 
-//       <View style={styles.section}>
-//         <Text style={styles.sectionTitle}>Currently Reading</Text>
-//         {user.currentlyReading.map((book, index) => (
-//           <View key={index} style={styles.bookItem}>
-//             <Text style={styles.bookTitle}>{book.title}</Text>
-//             <Text style={styles.bookAuthor}>{book.author}</Text>
-//           </View>
-//         ))}
-//       </View>
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
+        <TouchableOpacity onPress={() => console.log("Logout")}>
+          <Image
+            source={require("../assets/logout.png")}
+            style={{ width: 30, height: 30 }}
+          />
+        </TouchableOpacity>
+      </View>
 
-//       <View style={styles.section}>
-//         <Text style={styles.sectionTitle}>To Read</Text>
-//         {user.toRead.map((book, index) => (
-//           <View key={index} style={styles.bookItem}>
-//             <Text style={styles.bookTitle}>{book.title}</Text>
-//             <Text style={styles.bookAuthor}>{book.author}</Text>
-//           </View>
-//         ))}
-//       </View>
+      <View style={styles.container}>
+        <Image
+          source={require("../assets/girl.png")}
+          style={{ width: 100, height: 100, borderRadius: 50 }}
+        />
+        <Text style={styles.profileName}>{user.name}</Text>
+      </View>
 
-//       <View style={styles.section}>
-//         <Text style={styles.sectionTitle}>Friends</Text>
-//         {user.friends.map((friend, index) => (
-//           <TouchableOpacity key={index} style={styles.friendItem}>
-//             <Text style={styles.friendName}>{friend.name}</Text>
-//           </TouchableOpacity>
-//         ))}
-//       </View>
-//     </ScrollView>
-//   );
-// };
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Change Theme</Text>
+        <View style={styles.privacySettings}>
+          <Text style={styles.privacyText}>Dark</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={user.isPublic ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={togglePrivacy}
+            value={user.isPublic}
+          />
+          <Text style={styles.privacyText}>Light</Text>
+        </View>
+        <Text style={styles.sectionTitle}>Activity Visibility</Text>
+        <Picker
+          selectedValue={user.activityVisibility}
+          onValueChange={handleVisibilityChange}
+        >
+          <Picker.Item label="Public" value="Public" />
+          <Picker.Item label="Friends" value="Friends" />
+          <Picker.Item label="Private" value="Private" />
+        </Picker>
+      </View>
 
-// const styles = StyleSheet.create({
-//   container: {
-//     alignItems: 'center',
-//     padding: 20,
-//   },
-//   profileName: {
-//     fontSize: 20,
-//     marginTop: 10,
-//   },
-//   section: {
-//     margin: 20,
-//   },
-//   sectionTitle: {
-//     fontSize: 18,
-//     fontWeight: 'bold',
-//   },
-//   bookItem: {
-//     marginBottom: 10,
-//   },
-//   bookTitle: {
-//     fontSize: 16,
-//   },
-//   bookAuthor: {
-//     fontSize: 14,
-//     color: '#888',
-//   },
-//   friendItem: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginBottom: 10,
-//   },
-//   friendName: {
-//     fontSize: 16,
-//     marginLeft: 10,
-//   },
-// });
+      {/* give me a straight line like hr */}
+        <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
 
-// export default ProfilePage;
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Books Read</Text>
+        <View style={styles.progressBar}>
+          <View
+            style={{
+              backgroundColor: "#6a5acd",
+              height: 10,
+              width: `${(user.booksRead / 10) * 100}%`,
+            }}
+          />
+        </View>
+        <Text>{user.booksRead} out of 10 books read</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Words Saved</Text>
+        <View style={styles.progressBar}>
+          <View
+            style={{
+              backgroundColor: "#6a5acd",
+              height: 10,
+              width: `${(user.wordsSaved / 10000) * 100}%`,
+            }}
+          />
+        </View>
+        <Text>{user.wordsSaved} out of 10000 words saved</Text>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Comment Made</Text>
+        <View style={styles.progressBar}>
+          <View
+            style={{
+              backgroundColor: "#6a5acd",
+              height: 10,
+              width: `${(user.wordsSaved / 10000) * 100}%`,
+            }}
+          />
+        </View>
+        <Text>{user.wordsSaved} comments made</Text>
+      </View>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Friend Recommendations</Text>
+        <Text>Suggested Friends: Friend 3, Friend 4</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Achievements and Badges</Text>
+        {user.achievements.map((achievement, index) => (
+          <View key={index} style={styles.achievementItem}>
+            <Text style={styles.achievementText}>{achievement}</Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 30,
+    padding: 20,
+     // give a background color and blur the background image to make the text more readable
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#d3d3d3",
+
+  },
+  profileName: {
+    fontSize: 40,
+    marginTop: 10,
+    fontFamily:  "sans-serif-condensed",
+    fontWeight: "bold",
+  },
+  section: {
+    margin: 20,
+    
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  progressBar: {
+    backgroundColor: "#d3d3d3",
+    height: 10,
+    borderRadius: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    
+  },
+  achievementItem: {
+    marginBottom: 10,
+  },
+  achievementText: {
+    fontSize: 16,
+    color: "#6a5acd",
+  },
+  privacySettings: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  privacyText: {
+    fontSize: 16,
+  },
+});
+
+export default ProfilePage;
