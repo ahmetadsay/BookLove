@@ -12,19 +12,19 @@ const index = () => {
       description: "Discover and share your favorite books with the world",
     },
     {
-      image: require("../assets/book.png"),
+      image: require("../assets/books2.png"),
       title: "Find Your Next Read",
       description:
         "Explore our vast collection of books and find your next favorite",
     },
     {
-      image: require("../assets/book.png"),
+      image: require("../assets/books3.png"),
       title: "Connect with Other Readers",
       description:
         "Join our community of book lovers and share your thoughts and opinions",
     },
     {
-      image: require("../assets/book.png"),
+      image: require("../assets/books4.png"),
       title: "Get Started",
       description:
         "Create an account or log in to start discovering and sharing books",
@@ -63,22 +63,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#FDF3E6",
   },
   image: {
-    width: 300,
-    height: 300,
+    width: 400,
+    height: 400,
     resizeMode: "contain",
   },
   title: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: "bold",
     marginTop: 32,
     marginBottom: 16,
     textAlign: "center",
+   
+
   },
   description: {
-    fontSize: 16,
+    fontSize: 22,
     marginBottom: 32,
     textAlign: "center",
   },
