@@ -10,13 +10,15 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import firebaseConfig from "../firebase/firebase";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { Picker } from "@react-native-picker/picker";
+import firebaseConfig from "../firebase/firebase";
+
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -36,12 +38,22 @@ const SignUpForm = () => {
 
   const handleSubmit = async (values) => {
     const auth = getAuth();
+    const db = getFirestore();
     try {
-      const { email, password } = values;
+      const { email, password, gender, name } = values;
+      const docRef = await addDoc(collection(db, "users"), {
+        name: name,
+        email: email,
+        password: password,
+        gender: gender,
+      });
+      console.log("Document written with ID: ", docRef.id);
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+
       // handle error
     }
   };
@@ -141,6 +153,7 @@ const SignUpForm = () => {
             )}
             <View style={styles.pickerContainer}>
               <Picker
+                value={values.gender}
                 style={styles.input2}
                 selectedValue={values.gender}
                 onValueChange={(itemValue, itemIndex) =>
