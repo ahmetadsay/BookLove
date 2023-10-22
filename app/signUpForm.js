@@ -11,7 +11,12 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import firebaseConfig from "../firebase/firebase";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { Picker } from "@react-native-picker/picker";
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -22,26 +27,24 @@ const signUpSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm password is required"),
+  gender: Yup.string().required("Gender is required"),
 });
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
   const handleSubmit = async (values) => {
     const auth = getAuth();
     try {
-        const { email, password } = values;
-        await createUserWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // handle error
-      }
+      const { email, password } = values;
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // handle error
     }
-
-
+  };
 
   return (
     <View style={styles.container}>
@@ -57,6 +60,7 @@ const SignUpForm = () => {
           password: "",
           confirmPassword: "",
           agreeToTerms: false, // add new field for checkbox
+          gender: "",
         }}
         validationSchema={signUpSchema}
         onSubmit={handleSubmit}
@@ -135,7 +139,23 @@ const SignUpForm = () => {
             {errors.confirmPassword && touched.confirmPassword && (
               <Text style={styles.error}>{errors.confirmPassword}</Text>
             )}
-            {/* Add checkbox for terms and conditions */}
+            <View style={styles.pickerContainer}>
+              <Picker
+                style={styles.input2}
+                selectedValue={values.gender}
+                onValueChange={(itemValue, itemIndex) =>
+                  handleChange("gender")(itemValue)
+                }
+              >
+                <Picker.Item label="Select Gender" value="" />
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+              </Picker>
+              {errors.gender && touched.gender && (
+                <Text style={styles.error}>{errors.gender}</Text>
+              )}
+            </View>
+
             <View style={styles.checkboxContainer}>
               <TouchableOpacity
                 style={styles.checkbox}
@@ -147,6 +167,7 @@ const SignUpForm = () => {
                   <MaterialIcons name="check" size={24} color="#007AFF" />
                 )}
               </TouchableOpacity>
+
               <Text style={styles.checkboxLabel}>
                 I agree to the terms and conditions
               </Text>
@@ -171,6 +192,16 @@ const styles = StyleSheet.create({
     gap: 20,
     marginHorizontal: 20,
   },
+  pickerContainer: {
+    width: "80%",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginBottom: 10,
+
+  },
+  
   inputContainer: {
     display: "flex",
     flexDirection: "row",
@@ -179,6 +210,15 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "80%",
+    height: 50,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  input2: {
+    width: "100%",
     height: 50,
     padding: 10,
     borderWidth: 1,

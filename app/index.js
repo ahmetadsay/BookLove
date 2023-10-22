@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const index = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -47,7 +48,7 @@ const index = () => {
       <Text style={styles.description}>{slides[currentIndex].description}</Text>
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>
-          {currentIndex === slides.length - 1 ? "Get Started" : "Next"}
+          {currentIndex === slides.length - 1 ? <MaterialIcons name="home"    size={72} color="#23527C" /> :   <MaterialIcons name="forward"  size={72} color="#23527C" /> }
           {/* <Link href="/login" >
             
             </Link> */}
@@ -84,12 +85,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     textAlign: "center",
   },
-  button: {
-    backgroundColor: "#007AFF",
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-  },
+
   buttonText: {
     color: "#fff",
     fontSize: 16,
