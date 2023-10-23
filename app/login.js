@@ -64,7 +64,7 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/book.png")} style={styles.image} />
+      <Image source={require("../assets/home.png")} style={styles.image} />
       <Text style={styles.title}>
         {applyRandomColor("Welcome to BookLove")}
       </Text>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFDD0",
+    backgroundColor: "#FDF3E6",
   },
   image: {
     width: 300,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: "#0b5da1",
+    backgroundColor: "#23527C",
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
