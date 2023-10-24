@@ -1,10 +1,15 @@
 export async function fetchCategoriesFromGoogleAPI(selectedCategory) {
     try {
-      const apiKey = "AIzaSyDwQry89DuMeugtvVOdisaFaNODJdEMqT4"; // Replace with your API key
+      const apiKey = "AIzaSyDwQry89DuMeugtvVOdisaFaNODJdEMqT4";
+       // Replace with your API key
+      const maxResults = 10; // Maximum number of results per request
       const url =`https://www.googleapis.com/books/v1/volumes?q=subject:${selectedCategory}&orderBy=relevance&maxResults=${maxResults}&key=${apiKey}`
+
   
       const response = await fetch(url);
       const data = await response.json();
+
+
   
       console.log(data);
   

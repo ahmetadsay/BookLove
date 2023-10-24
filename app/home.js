@@ -18,6 +18,10 @@ const Home = () => {
   // State variable to store the list of books
   const [books, setBooks] = useState([]);
 
+  const categories = ["Classics", "Novels", "Fantasy", "Mystery", "Horror", "Romance", "Comics"];
+
+  const trendingBoksByCategory = { };
+
   let timer;
 
   useEffect(() => {
@@ -37,18 +41,22 @@ const Home = () => {
   }, [searchQuery, selectedCategory]);
 
   useEffect(() => {
-    const fetchTrendingBooks = async () => {
-      const trendingBooksData = await fetchCategoriesFromGoogleAPI('Classics');
-      console.log(trendingBooksData); // Add this line
-      setTrendingBooks(trendingBooksData);
+    const fetchTrendingBooks = async ( category ) => {
+      const trendingBooksData = await fetchCategoriesFromGoogleAPI(category);
+      trendingBoksByCategory[category] = trendingBooksData;
+      setTrendingBooks({ ...trendingBoksByCategory });
+     
+
     };
-  
-    fetchTrendingBooks();
+    categories.forEach((category) => {
+      fetchTrendingBooks(category);
+    });
+
   }, []);
   
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.welcome}>Welcome, {userName}</Text>
         <Text style={styles.message}>
@@ -60,9 +68,10 @@ const Home = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-
+        
+  
         {books ? (
-          <ScrollView>
+          <ScrollView horizontal={true} contentContainerStyle={styles.booksScrollView} >
             {books.map((book, index) => (
               <Book key={index} book={book} />
             ))}
@@ -70,7 +79,7 @@ const Home = () => {
         ) : (
           <Text>No books available</Text>
         )}
-
+  
         {/* Trending Categories */}
         <View style={styles.trendingCategories}>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 8 }}>
@@ -86,18 +95,49 @@ const Home = () => {
             <Text>No trending books available</Text>
           )}
         </View>
+  
+        {/* Render the books according to category */}
+        {categories.map((category) => (
+          <View key={category}>
+            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 8 }}>
+              {category}
+            </Text>
+            {trendingBooks[category] ? (
+              <ScrollView horizontal={true}>
+                {trendingBooks[category].slice(0, 10).map((book, index) => (
+                  <Book key={index} book={book} />
+                ))}
+              </ScrollView>
+            ) : (
+              <Text>No books available</Text>
+            )}
+          </View>
+        )
+        )}
+  
+
+
       </View>
       <Navbar />
-    </View>
-  );
-};
+    </ScrollView>
+
+  );  
+}
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#D0C4B0",
+
+  },
+  booksScrollView: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
   },
+
   content: {
     flex: 1,
     backgroundColor: "#C2B7B7",
@@ -122,6 +162,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     
   },
+
+
 });
 
 export default Home;
