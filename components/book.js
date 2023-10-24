@@ -1,5 +1,3 @@
-// components/Book.js
-
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
@@ -13,7 +11,9 @@ const Book = ({ book }) => {
         />
       )}
       <Text style={styles.title}>{book.volumeInfo.title}</Text>
-      <Text style={styles.description}>{book.volumeInfo.description}</Text>
+      <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
+        {book.volumeInfo.description}
+      </Text>
       <Text style={styles.rating}>
         Rating: {book.volumeInfo.averageRating || "N/A"}
       </Text>
@@ -28,7 +28,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     alignItems: "center",
-   
+    width: 200,
+    height: 'auto'
   },
   image: {
     width: 100,
