@@ -15,9 +15,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { Picker } from "@react-native-picker/picker";
 import firebaseConfig from "../firebase/firebase";
+import { setUserProperties } from "firebase/analytics";
 
 
 const signUpSchema = Yup.object().shape({
@@ -36,27 +38,54 @@ const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = async (values) => {
-    const auth = getAuth();
-    const db = getFirestore();
-    try {
-      const { email, password, gender, name } = values;
-      const docRef = await addDoc(collection(db, "users"), {
-        name: name,
-        email: email,
-        password: password,
-        gender: gender,
-      });
-      console.log("Document written with ID: ", docRef.id);
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+const handleSubmit = async (values) => {
+  const displayName = values.name;
+  const auth = getAuth();
+  const db = getFirestore();
+  try {
+    const { email, password, gender, name  } = values;
+    
+    // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication 
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+      displayName
+    );
 
-      // handle error
-    }
-  };
+    // Update the user profile in Firebase Authentication
+    await updateProfile(auth.currentUser, {
+      displayName: name,
+    });
+
+
+
+
+      
+
+
+
+
+
+       // Create a user document in Firestore
+    const docRef = await addDoc(collection(db, "users"), {
+      uid: userCredential.user.uid,
+
+      name: name,
+      email: email,
+      gender: gender,
+
+    });
+    
+    console.log("Document written with ID: ", docRef.id);
+  } catch (error) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorCode, errorMessage);
+
+    // Handle error
+  }
+};
 
   return (
     <View style={styles.container}>

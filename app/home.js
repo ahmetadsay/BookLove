@@ -1,13 +1,15 @@
 import Navbar from "../components/navbar";
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView } from "react-native";
-
 import { fetchBooksFromGoogleAPI } from "../library/bookStore";
 import Book from "../components/book";
 import { fetchCategoriesFromGoogleAPI } from "../library/categoryStore";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Home = () => {
-  const [userName, setUserName] = useState("John Doe");
+  // take the authenticated user name from firebase and render it in the welcome message
+  const [userName, setUserName] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -18,9 +20,17 @@ const Home = () => {
   // State variable to store the list of books
   const [books, setBooks] = useState([]);
 
-  const categories = ["Classics", "Novels", "Fantasy", "Mystery", "Horror", "Romance", "Comics"];
+  const categories = [
+    "Classics",
+    "Novels",
+    "Fantasy",
+    "Mystery",
+    "Horror",
+    "Romance",
+    "Comics",
+  ];
 
-  const trendingBoksByCategory = { };
+  const trendingBoksByCategory = {};
 
   let timer;
 
@@ -35,25 +45,36 @@ const Home = () => {
         selectedCategory
       );
       setBooks(booksData);
-
-  
     }, 500);
   }, [searchQuery, selectedCategory]);
 
   useEffect(() => {
-    const fetchTrendingBooks = async ( category ) => {
+    const fetchTrendingBooks = async (category) => {
       const trendingBooksData = await fetchCategoriesFromGoogleAPI(category);
       trendingBoksByCategory[category] = trendingBooksData;
       setTrendingBooks({ ...trendingBoksByCategory });
-     
-
     };
     categories.forEach((category) => {
       fetchTrendingBooks(category);
     });
-
   }, []);
-  
+
+  useEffect(() => {
+  // give me the current user datas from firebase and console.log it 
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user);
+        setUserName(user.displayName);
+      } else {
+        console.log("user is not logged in");
+      }
+    }); 
+  }, []);
+
+ 
+
+    
 
   return (
     <ScrollView style={styles.container}>
@@ -68,10 +89,12 @@ const Home = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        
-  
+
         {books ? (
-          <ScrollView horizontal={true} contentContainerStyle={styles.booksScrollView} >
+          <ScrollView
+            horizontal={true}
+            contentContainerStyle={styles.booksScrollView}
+          >
             {books.map((book, index) => (
               <Book key={index} book={book} />
             ))}
@@ -79,7 +102,7 @@ const Home = () => {
         ) : (
           <Text>No books available</Text>
         )}
-  
+
         {/* Trending Categories */}
         <View style={styles.trendingCategories}>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 8 }}>
@@ -95,7 +118,7 @@ const Home = () => {
             <Text>No trending books available</Text>
           )}
         </View>
-  
+
         {/* Render the books according to category */}
         {categories.map((category) => (
           <View key={category}>
@@ -112,25 +135,17 @@ const Home = () => {
               <Text>No books available</Text>
             )}
           </View>
-        )
-        )}
-  
-
-
+        ))}
       </View>
       <Navbar />
     </ScrollView>
-
-  );  
-}
-
-
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#D0C4B0",
-
   },
   booksScrollView: {
     flexDirection: "row",
@@ -160,10 +175,7 @@ const styles = StyleSheet.create({
   },
   trendingCategories: {
     marginBottom: 16,
-    
   },
-
-
 });
 
 export default Home;
