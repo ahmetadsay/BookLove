@@ -8,7 +8,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Home = () => {
-  // take the authenticated user name from firebase and render it in the welcome message
+
   const [userName, setUserName] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");

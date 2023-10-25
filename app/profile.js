@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,11 +9,39 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Image } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
+import { query, where, getDocs } from "firebase/firestore";
 
 const ProfilePage = () => {
+  // TAKE the user's gender from the database and display the appropriate image here
+
+  const [userGender, setUserGender] = useState("");
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    const db = getFirestore();
+    const usersCollection = collection(db, "users");
+    currentUser.displayName = userName;
+
+    const userQuery = query(usersCollection, where("uid", "==", currentUser.uid));
+
+    getDocs(userQuery)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const userData = doc.data();
+          setUserGender(userData.gender);
+          setUserName(userData.name);
+        });
+      })
+      .catch((error) => {
+        console.error("Error getting user data:", error);
+      });
+  }, []);
+
   const [user, setUser] = useState({
-    name: "John Doe",
     currentlyReading: [
       { title: "Book 1", author: "Author 1" },
       { title: "Book 2", author: "Author 2" },
@@ -54,13 +82,24 @@ const ProfilePage = () => {
           />
         </TouchableOpacity>
       </View>
-
       <View style={styles.container}>
-        <Image
-          source={require("../assets/girl.png")}
-          style={{ width: 100, height: 100, borderRadius: 50 }}
-        />
-        <Text style={styles.profileName}>{user.name}</Text>
+        {userGender === "Male" ? (
+          <Image
+            source={require("../assets/boy.png")}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        ) : userGender === "Female" ? (
+          <Image
+            source={require("../assets/girl.png")}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        ) : (
+          <Image
+            source={require("../assets/book.png")}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        )}
+        <Text style={styles.profileName}> {userName} </Text>
       </View>
 
       <View style={styles.section}>
@@ -88,8 +127,7 @@ const ProfilePage = () => {
       </View>
 
       {/* give me a straight line like hr */}
-        <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-
+      <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Books Read</Text>
@@ -158,21 +196,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 30,
     padding: 20,
-     // give a background color and blur the background image to make the text more readable
+    // give a background color and blur the background image to make the text more readable
     backgroundColor: "white",
     borderBottomWidth: 1,
     borderBottomColor: "#d3d3d3",
-
   },
   profileName: {
     fontSize: 40,
     marginTop: 10,
-    fontFamily:  "sans-serif-condensed",
+    fontFamily: "sans-serif-condensed",
     fontWeight: "bold",
   },
   section: {
     margin: 20,
-    
   },
   sectionTitle: {
     fontSize: 18,
@@ -184,7 +220,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 5,
     marginBottom: 5,
-    
   },
   achievementItem: {
     marginBottom: 10,
