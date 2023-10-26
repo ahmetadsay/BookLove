@@ -1,14 +1,34 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+} from "react-native";
+import { useRouter } from "expo-router";
+import BookDetail from "../app/bookDetail/[id]";
 
 const Book = ({ book }) => {
+  const router = useRouter();
+
+  const id = book.id;
+  console.log(id);
+  if (!book) {
+    return null; // Return null or some loading/empty state if book is undefined
+  }
+
   return (
     <View style={styles.container}>
       {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail && (
-        <Image
-          source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
-          style={styles.image}
-        />
+        <TouchableOpacity onPress={() => router.push(`bookDetail/${id}`)}>
+          <Image
+            source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
+            style={styles.image}
+          />
+
+        </TouchableOpacity>
       )}
       <Text style={styles.title}>{book.volumeInfo.title}</Text>
       <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
@@ -29,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     width: 200,
-    height: 'auto'
+    height: "auto",
   },
   image: {
     width: 100,

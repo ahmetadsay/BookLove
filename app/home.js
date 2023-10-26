@@ -8,7 +8,6 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Home = () => {
-
   const [userName, setUserName] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,7 +59,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-  // give me the current user datas from firebase and console.log it 
+    // give me the current user datas from firebase and console.log it
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -69,12 +68,8 @@ const Home = () => {
       } else {
         console.log("user is not logged in");
       }
-    }); 
+    });
   }, []);
-
- 
-
-    
 
   return (
     <ScrollView style={styles.container}>
@@ -118,6 +113,7 @@ const Home = () => {
             <Text>No trending books available</Text>
           )}
         </View>
+
 
         {/* Render the books according to category */}
         {categories.map((category) => (
