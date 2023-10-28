@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -124,7 +125,7 @@ const Login = () => {
           </TouchableOpacity>
           <Text>Remember me</Text>
         </View>
-        
+
         {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
@@ -135,6 +136,26 @@ const Login = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleSignup}>
           <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+
+        {/* give me a straight line  */}
+
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flex: 1, height: 1, backgroundColor: "#000" }} />
+          <View>
+            <Text style={{ width: 50, textAlign: "center" }}>OR</Text>
+          </View>
+          <View style={{ flex: 1, height: 1, backgroundColor: "#000" }} />
+        </View>
+
+        <TouchableOpacity style={styles.google}>
+   
+           <Image source={require("../assets/google.png")} style={{ width: 20, height: 20 }} />
+           
+          <Text style={{ marginLeft: 10 }}>Sign in with Google</Text>
+          
+
+
         </TouchableOpacity>
       </View>
     </View>
@@ -149,10 +170,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#FDF3E6",
   },
   image: {
-    width: 300,
-    height: 300,
+    width: 250,
+    height: 250,
     marginBottom: 20,
   },
+
+  google: {
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+
+
   title: {
     fontSize: 24,
     fontWeight: "bold",
