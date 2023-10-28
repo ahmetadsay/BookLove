@@ -9,9 +9,10 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Image } from "react-native";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
+import { router } from "expo-router";
 
 const ProfilePage = () => {
   // TAKE the user's gender from the database and display the appropriate image here
@@ -63,6 +64,17 @@ const ProfilePage = () => {
     activityVisibility: "Friends",
   });
 
+  const  handleLogOut = () => {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      console.log("User signed out");
+      router.push("/login");
+
+    }).catch((error) => {
+      console.log(error);
+    });
+  };
+
   const togglePrivacy = () => {
     setUser({ ...user, isPublic: !user.isPublic });
   };
@@ -75,7 +87,7 @@ const ProfilePage = () => {
     <ScrollView>
       <View style={styles.container}>
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
-        <TouchableOpacity onPress={() => console.log("Logout")}>
+        <TouchableOpacity onPress={handleLogOut}>
           <Image
             source={require("../assets/logout.png")}
             style={{ width: 30, height: 30 }}

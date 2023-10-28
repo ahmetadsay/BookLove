@@ -8,14 +8,28 @@ import {
   StyleSheet,
 } from "react-native";
 import { router } from "expo-router";
-import { getAuth,  signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
-
+  useEffect(() => {
+    AsyncStorage.getItem("email").then((savedEmail) => {
+      if (savedEmail) {
+        setEmail(savedEmail);
+      }
+    });
+    AsyncStorage.getItem("password").then((savedPassword) => {
+      if (savedPassword) {
+        setPassword(savedPassword);
+      }
+    });
+  }, []);
 
   const handleLogin = () => {
     const auth = getAuth();
@@ -26,18 +40,18 @@ const Login = () => {
         console.log(user);
         router.push("/home");
 
+        if (rememberMe) {
+          AsyncStorage.setItem("email", email);
+          AsyncStorage.setItem("password", password);
+        }
+
         // ...
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = 'Invalid email or password'
+        const errorMessage = "Invalid email or password";
         setErrorText(errorMessage);
       });
-    
-
-
-   
-
   };
 
   const handleSignup = () => {
@@ -83,11 +97,38 @@ const Login = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => setRememberMe(!rememberMe)}
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 5,
+              borderWidth: 1,
+              borderColor: "#000",
+              marginRight: 10,
+            }}
+          >
+            {rememberMe ? (
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "#000",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#fff" }}>✓</Text>
+              </View>
+            ) : null}
+          </TouchableOpacity>
+          <Text>Remember me</Text>
+        </View>
+        
         {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
-    
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
