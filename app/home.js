@@ -68,8 +68,9 @@ const Home = () => {
       } else {
         console.log("user is not logged in");
       }
-    });
-  }, []);
+    }); 
+  }
+  , []);
 
   return (
     <ScrollView style={styles.container}>
@@ -113,7 +114,6 @@ const Home = () => {
             <Text>No trending books available</Text>
           )}
         </View>
-
 
         {/* Render the books according to category */}
         {categories.map((category) => (

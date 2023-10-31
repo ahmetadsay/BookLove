@@ -16,7 +16,9 @@ const Navbar = () => {
       <TouchableOpacity onPress={() => router.push("barcodeScanner")}>
         <Ionicons name="add-circle-outline" size={48} color="black" />
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push("freeBooks")}>
       <Ionicons name="book-outline" size={32} color="black" />
+      </TouchableOpacity>
       <Ionicons name="trophy-outline" size={32} color="black" />
     </View>
   );

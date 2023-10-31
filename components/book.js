@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
-import BookDetail from "../app/bookDetail/[id]";
+
 
 const Book = ({ book }) => {
   const router = useRouter();
 
   const id = book.id;
+
+  const title = book.volumeInfo.title;
   console.log(id);
   if (!book) {
     return null; // Return null or some loading/empty state if book is undefined
@@ -37,6 +39,11 @@ const Book = ({ book }) => {
       <Text style={styles.rating}>
         Rating: {book.volumeInfo.averageRating || "N/A"}
       </Text>
+
+    {/* create a button 'click for reading'  */}
+
+   
+
     </View>
   );
 };
