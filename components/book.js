@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-
 const Book = ({ book }) => {
   const router = useRouter();
 
@@ -29,48 +28,37 @@ const Book = ({ book }) => {
             source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
             style={styles.image}
           />
-
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{book.volumeInfo.title}</Text>
-      <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
-        {book.volumeInfo.description}
+      <Text style={styles.author} ellipsizeMode="tail">
+        {book.volumeInfo.authors && book.volumeInfo.authors[0]}
       </Text>
-      <Text style={styles.rating}>
-        Rating: {book.volumeInfo.averageRating || "N/A"}
-      </Text>
-
-    {/* create a button 'click for reading'  */}
-
-   
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16,
-    backgroundColor: "#FFFFFF",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    width: 200,
-    height: "auto",
+    width: 150,
+    marginRight: 16,
+    marginBottom: 16,
   },
   image: {
-    width: 100,
-    height: 150,
+    width: 130,
+    height: 180,
     marginBottom: 8,
+    borderRadius: 8,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
   },
-  description: {
-    fontSize: 14,
-    marginBottom: 8,
+  author: {
+    fontSize: 16,
+    color: "#A3A3A3",
   },
+
   rating: {
     fontSize: 12,
   },
