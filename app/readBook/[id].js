@@ -1,16 +1,29 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { usePathname } from 'expo-router';
+
 
 const BookReader = () => {
-  // Replace with the actual URL of the book in a reader-friendly format (e.g., "text/plain" or "text/html")
-  const bookUrl = 'https://www.gutenberg.org/ebooks/1513.html.images';
+
+  const pathname = usePathname();
+  const id = pathname.split("/")[2];
+  const [loading, setLoading] = useState(true);
+  const bookUrl = `https://www.gutenberg.org/ebooks/${id}.html.images`;
 
   return (
     <View style={styles.container}>
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007BFF" />
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      )}
+
       <WebView
         source={{ uri: bookUrl }}
-        style={styles.webview}
+        style={{ ...styles.webview, display: loading ? 'none' : 'flex' }}
+        onLoad={() => setLoading(false)}
       />
     </View>
   );
@@ -23,6 +36,16 @@ const styles = StyleSheet.create({
   webview: {
     flex: 1,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+  },
 });
 
 export default BookReader;
+
