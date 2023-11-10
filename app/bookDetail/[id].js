@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import { usePathname } from "expo-router";
 import HTML from "react-native-render-html";
 
@@ -28,6 +28,7 @@ const BookDetail = ({}) => {
   }
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       {book.volumeInfo && book.volumeInfo.imageLinks && (
         <Image
@@ -44,14 +45,11 @@ const BookDetail = ({}) => {
         </Text>
       )}
 
-        <Text>
-      About the author:
-      </Text>
-
       {book.volumeInfo && book.volumeInfo.description && (
         <HTML source={{ html: book.volumeInfo.description }} />
       )}
     </View>
+    </ScrollView>
   );
 };
 
@@ -67,7 +65,7 @@ const styles = StyleSheet.create({
     width: 190,
     height: 280,
     marginBottom: 8,
-    borderRadius: 8,
+    borderRadius: 16,
   },
   title: {
     fontSize: 18,
@@ -79,6 +77,16 @@ const styles = StyleSheet.create({
     color: "#A3A3A3",
     textAlign: 'center',
   },
+
+  topic: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+    color: '#663300',
+    textAlign: 'left',
+
+  },
+
 
 
 });

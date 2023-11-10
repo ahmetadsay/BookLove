@@ -24,10 +24,11 @@ const Book = ({ book }) => {
     <View style={styles.container}>
       {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail && (
         <TouchableOpacity onPress={() => router.push(`bookDetail/${id}`)}>
-          <Image
+
+       {    <Image
             source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
             style={styles.image}
-          />
+          />}
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{book.volumeInfo.title}</Text>

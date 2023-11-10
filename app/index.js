@@ -48,7 +48,11 @@ const index = () => {
       <Text style={styles.description}>{slides[currentIndex].description}</Text>
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>
-          {currentIndex === slides.length - 1 ? <MaterialIcons name="home"    size={72} color="#23527C" /> :   <MaterialIcons name="forward"  size={72} color="#23527C" /> }
+          {currentIndex === slides.length - 1 ? (
+            <MaterialIcons name="home" size={72} color="#23527C" />
+          ) : (
+            <MaterialIcons name="forward" size={72} color="#23527C" />
+          )}
           {/* <Link href="/login" >
             
             </Link> */}
@@ -77,8 +81,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     marginBottom: 16,
     textAlign: "center",
-   
-
   },
   description: {
     fontSize: 22,
