@@ -39,12 +39,21 @@ export default function BarCodeScan() {
       />
       {scanned && (
         <>
-          <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+          <Button
+            title={"Tap to Scan Again"}
+            onPress={() => setScanned(false)}
+          />
           {bookData ? (
             <View style={styles.bookDataContainer}>
-              <Text style={styles.bookDataTitle}>{bookData.items[0].volumeInfo.title}</Text>
-              <Text style={styles.bookDataAuthor}>{bookData.items[0].volumeInfo.authors[0]}</Text>
-              <Text style={styles.bookDataDescription}>{bookData.items[0].volumeInfo.description}</Text>
+              <Text style={styles.bookDataTitle}>
+                {bookData.items[0].volumeInfo.title}
+              </Text>
+              <Text style={styles.bookDataAuthor}>
+                {bookData.items[0].volumeInfo.authors[0]}
+              </Text>
+              <Text style={styles.bookDataDescription}>
+                {bookData.items[0].volumeInfo.description}
+              </Text>
             </View>
           ) : (
             <Text style={styles.bookDataLoading}>Loading book data...</Text>

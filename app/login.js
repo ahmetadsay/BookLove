@@ -6,18 +6,32 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Button,
 } from "react-native";
 import { router } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId:
+      "408102652283-q7o2bq5615r96agpaplt8vsnc2cnslof.apps.googleusercontent.com",
+    iosClientId:
+      "408102652283-jekidab8mqvq8p2mgjff5sk7so27t7sm.apps.googleusercontent.com",
+    androidClientId:
+      "408102652283-bro7s3ah3t1uhsdf6r6h1ln4jkc4ui3i.apps.googleusercontent.com",
+  });
 
   useEffect(() => {
     AsyncStorage.getItem("email").then((savedEmail) => {
@@ -148,15 +162,8 @@ const Login = () => {
           <View style={{ flex: 1, height: 1, backgroundColor: "#000" }} />
         </View>
 
-        <TouchableOpacity style={styles.google}>
-   
-           <Image source={require("../assets/google.png")} style={{ width: 20, height: 20 }} />
-           
-          <Text style={{ marginLeft: 10 }}>Sign in with Google</Text>
-          
-
-
-        </TouchableOpacity>
+            <Button title="Login with Google" onPress={() => promptAsync()} />
+            
       </View>
     </View>
   );
@@ -184,8 +191,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
-
 
   title: {
     fontSize: 24,
