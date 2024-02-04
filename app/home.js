@@ -11,7 +11,6 @@ import {
 import { fetchBooksFromGoogleAPI } from "../library/bookStore";
 import Book from "../components/book";
 import { fetchCategoriesFromGoogleAPI } from "../library/categoryStore";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 const Home = () => {
@@ -54,7 +53,7 @@ const Home = () => {
       setBooks(booksData);
       // Update the loading state when data is loaded
       setLoading(false);
-    }, 500);
+    }, 1500);
   }, [searchQuery, selectedCategory]);
 
   useEffect(() => {

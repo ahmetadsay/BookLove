@@ -18,8 +18,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { Picker } from "@react-native-picker/picker";
-import firebaseConfig from "../firebase/firebase";
-import { setUserProperties } from "firebase/analytics";
+
 
 
 const signUpSchema = Yup.object().shape({
