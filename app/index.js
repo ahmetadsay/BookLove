@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const index = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const [firstLaunch, setFirstLaunch] = useState(null);
   const slides = [
     {
       image: require("../assets/book.png"),
@@ -32,6 +33,25 @@ const index = () => {
     },
   ];
 
+  useEffect(() => {
+    AsyncStorage.getItem('alreadyLaunched').then(value => {
+      if (value == null) {
+        AsyncStorage.setItem('alreadyLaunched', 'true');
+        setFirstLaunch(true);
+      } else {
+        setFirstLaunch(false);
+      }
+    });
+  }, []);
+
+
+useEffect(() => {
+  if (firstLaunch === false) {
+    router.push("/login");
+  }
+}, [firstLaunch]);
+
+
   const handleNext = () => {
     if (currentIndex === slides.length - 1) {
       // Navigate to login page
@@ -53,10 +73,7 @@ const index = () => {
           ) : (
             <MaterialIcons name="forward" size={72} color="#23527C" />
           )}
-          {/* <Link href="/login" >
-            
-            </Link> */}
-          {/* when the button turns get started navigate the user to the login page like top */}
+         
         </Text>
       </TouchableOpacity>
     </View>
