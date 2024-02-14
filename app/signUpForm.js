@@ -11,15 +11,9 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Picker } from "@react-native-picker/picker";
-
-
+import { auth, db } from "../firebase/firebase";
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -37,54 +31,43 @@ const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-const handleSubmit = async (values) => {
-  const displayName = values.name;
-  const auth = getAuth();
-  const db = getFirestore();
-  try {
-    const { email, password, gender, name  } = values;
-    
-    // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication 
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-      displayName
-    );
+  const handleSubmit = async (values) => {
+    const displayName = values.name;
 
-    // Update the user profile in Firebase Authentication
-    await updateProfile(auth.currentUser, {
-      displayName: name,
-    });
+    try {
+      const { email, password, gender, name } = values;
 
+      // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+        displayName
+      );
 
+      // Update the user profile in Firebase Authentication
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+      });
 
+      // Create a user document in Firestore
+      const docRef = await addDoc(collection(db, "users"), {
+        uid: userCredential.user.uid,
 
-      
+        name: name,
+        email: email,
+        gender: gender,
+      });
 
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
 
-
-
-
-       // Create a user document in Firestore
-    const docRef = await addDoc(collection(db, "users"), {
-      uid: userCredential.user.uid,
-
-      name: name,
-      email: email,
-      gender: gender,
-
-    });
-    
-    console.log("Document written with ID: ", docRef.id);
-  } catch (error) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode, errorMessage);
-
-    // Handle error
-  }
-};
+      // Handle error
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -240,9 +223,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     marginBottom: 10,
-
   },
-  
+
   inputContainer: {
     display: "flex",
     flexDirection: "row",
