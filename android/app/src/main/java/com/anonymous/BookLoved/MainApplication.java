@@ -1,4 +1,4 @@
-package com.anonymous.BookLoved;
+package com.anonymous.bookloved;
 
 import android.app.Application;
 import android.content.res.Configuration;
