@@ -86,74 +86,58 @@ const Home = () => {
       <Text style={styles.loadingText}>Loading...</Text>
     </View>
   ) : (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <View style={styles.searchView}>
         <Text style={styles.welcome}>Welcome, {userName}!</Text>
         <Text style={styles.message}>
           Which books would you like to check out today?
         </Text>
-
-        {/* add search icon inside of search input  */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-
-            
-            marginBottom: 16,
-          }}
-        >
-          <Ionicons
-            name="search"
-            size={24}
-            color="black"
-            style={{ marginRight: 8 , marginBottom: 9 }}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search for books"
-            onChangeText={(text) => setSearchQuery(text)}
-            value={searchQuery}
-          />
-        </View>
-
-
-        {books ? (
-          <ScrollView
-            horizontal={true}
-            contentContainerStyle={styles.booksScrollView}
-          >
-            {books.map((book, index) => (
-              <Book key={index} book={book} />
-            ))}
-          </ScrollView>
-        ) : (
-     null
-        )}
-
- 
-
-        {/* Render the books according to category */}
-        {categories.map((category) => (
-          <View key={category}>
-            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 8, color: '#663300',  }}>
-              {category}
-            </Text>
-            {trendingBooks[category] ? (
-              <ScrollView horizontal={true}>
-                {trendingBooks[category].slice(0, 10).map((book, index) => (
-                  <Book key={index} book={book} />
-                ))}
-              </ScrollView>
-            ) : (
-              <Text>No books available</Text>
-            )}
-          </View>
-        ))}
       </View>
 
+      {searchView(setSearchQuery, searchQuery)}
+      <ScrollView style={styles.container}>
+        <View style={styles.content}>
+          {/* add search icon inside of search input  */}
+
+          {books ? (
+            <ScrollView
+              horizontal={true}
+              contentContainerStyle={styles.booksScrollView}
+            >
+              {books.map((book, index) => (
+                <Book key={index} book={book} />
+              ))}
+            </ScrollView>
+          ) : null}
+
+          {/* Render the books according to category */}
+          {categories.map((category) => (
+            <View key={category}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginBottom: 8,
+                  color: "#663300",
+                }}
+              >
+                {category}
+              </Text>
+              {trendingBooks[category] ? (
+                <ScrollView horizontal={true}>
+                  {trendingBooks[category].slice(0, 10).map((book, index) => (
+                    <Book key={index} book={book} />
+                  ))}
+                </ScrollView>
+              ) : (
+                <Text>No books available</Text>
+              )}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
       <Navbar />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -161,6 +145,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: " #F5F5F5",
+  },
+
+  searchView: {
+    paddingHorizontal: 40,
   },
   booksScrollView: {
     flexDirection: "row",
@@ -186,7 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
-    color: '#663300',
+    color: "#663300",
   },
   message: {
     fontSize: 18,
@@ -199,7 +187,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 16,
     flex: 1,
-
   },
   trendingCategories: {
     marginBottom: 16,
@@ -216,3 +203,28 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
+function searchView(setSearchQuery, searchQuery) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+
+        marginBottom: 16,
+      }}
+    >
+      <Ionicons
+        name="search"
+        size={24}
+        color="black"
+        style={{ marginRight: 8, marginBottom: 9 }}
+      />
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search for books"
+        onChangeText={(text) => setSearchQuery(text)}
+        value={searchQuery}
+      />
+    </View>
+  );
+}

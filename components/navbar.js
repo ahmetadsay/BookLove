@@ -7,6 +7,11 @@ import BarCodeScan from "../app/barcodeScanner";
 
 
 const Navbar = () => {
+
+ const goBack = () => {
+    router.back();
+  };
+
   return (
     <View style={styles.navbar}>
       <Ionicons name="home" size={32} color="black" />
@@ -19,13 +24,19 @@ const Navbar = () => {
       <TouchableOpacity onPress={() => router.push("freeBooks")}>
       <Ionicons name="book-outline" size={32} color="black" />
       </TouchableOpacity>
-      <Ionicons name="trophy-outline" size={32} color="black" />
+      <TouchableOpacity onPress={goBack}>
+      <Ionicons name="arrow-back-outline" size={32} color="black" />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   navbar: {
+    position : "sticky",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",

@@ -73,6 +73,10 @@ const Login = () => {
     router.push("/signUpForm");
   };
 
+  const goHomePage = () => {
+    router.push("/home");
+  };
+
   const getRandomColor = () => {
     // Generate a random color in the format #RRGGBB
     const letters = "0123456789ABCDEF";
@@ -161,9 +165,9 @@ const Login = () => {
           </View>
           <View style={{ flex: 1, height: 1, backgroundColor: "#000" }} />
         </View>
-
-            <Button title="Login with Google" onPress={() => promptAsync()} />
-            
+        <TouchableOpacity style={styles.button} onPress={goHomePage}>
+          <Text style={styles.buttonText}>Continue as guest </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
