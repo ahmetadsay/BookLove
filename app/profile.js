@@ -23,23 +23,30 @@ const ProfilePage = () => {
   useEffect(() => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-    const db = getFirestore();
-    const usersCollection = collection(db, "users");
-    currentUser.displayName = userName;
 
-    const userQuery = query(usersCollection, where("uid", "==", currentUser.uid));
+    if (currentUser) {
+      currentUser.displayName = userName;
 
-    getDocs(userQuery)
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const userData = doc.data();
-          setUserGender(userData.gender);
-          setUserName(userData.name);
+      const db = getFirestore();
+      const usersCollection = collection(db, "users");
+
+      const userQuery = query(
+        usersCollection,
+        where("uid", "==", currentUser.uid)
+      );
+
+      getDocs(userQuery)
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            setUserGender(userData.gender);
+            setUserName(userData.name);
+          });
+        })
+        .catch((error) => {
+          console.error("Error getting user data:", error);
         });
-      })
-      .catch((error) => {
-        console.error("Error getting user data:", error);
-      });
+    }
   }, []);
 
   const [user, setUser] = useState({
@@ -64,15 +71,16 @@ const ProfilePage = () => {
     activityVisibility: "Friends",
   });
 
-  const  handleLogOut = () => {
+  const handleLogOut = () => {
     const auth = getAuth();
-    signOut(auth).then(() => {
-      console.log("User signed out");
-      router.push("/login");
-
-    }).catch((error) => {
-      console.log(error);
-    });
+    signOut(auth)
+      .then(() => {
+        console.log("User signed out");
+        router.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const togglePrivacy = () => {
@@ -87,6 +95,7 @@ const ProfilePage = () => {
     <ScrollView>
       <View style={styles.container}>
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
+
         <TouchableOpacity onPress={handleLogOut}>
           <Image
             source={require("../assets/logout.png")}
@@ -111,6 +120,7 @@ const ProfilePage = () => {
             style={{ width: 100, height: 100, borderRadius: 50 }}
           />
         )}
+        {!userName && <Text style={styles.profileName}> Hi booklover!</Text>}
         <Text style={styles.profileName}> {userName} </Text>
       </View>
 
@@ -196,6 +206,12 @@ const ProfilePage = () => {
           </View>
         ))}
       </View>
+
+      {userName && (
+        <TouchableOpacity>
+          <Text style={styles.button}> Clich here for delete account </Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
@@ -250,6 +266,17 @@ const styles = StyleSheet.create({
   },
   privacyText: {
     fontSize: 16,
+  },
+  button: {
+    backgroundColor: "#23527C",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    marginHorizontal: 20,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
   },
 });
 
