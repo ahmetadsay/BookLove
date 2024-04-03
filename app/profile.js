@@ -9,7 +9,12 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Image } from "react-native";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  deleteUser,
+} from "firebase/auth";
 import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import { router } from "expo-router";
@@ -89,6 +94,19 @@ const ProfilePage = () => {
 
   const handleVisibilityChange = (value) => {
     setUser({ ...user, activityVisibility: value });
+  };
+
+  const handleDelete = () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    deleteUser(currentUser)
+      .then(() => {
+        console.log("User deleted");
+        router.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -208,7 +226,7 @@ const ProfilePage = () => {
       </View>
 
       {userName && (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleDelete}>
           <Text style={styles.button}> Clich here for delete account </Text>
         </TouchableOpacity>
       )}
