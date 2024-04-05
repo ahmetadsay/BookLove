@@ -97,8 +97,6 @@ const Home = () => {
       {searchView(setSearchQuery, searchQuery)}
       <ScrollView style={styles.container}>
         <View style={styles.content}>
-          {/* add search icon inside of search input  */}
-
           {books ? (
             <ScrollView
               horizontal={true}
