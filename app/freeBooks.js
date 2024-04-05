@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { StyleSheet } from "react-native";
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the search icon
 import { router } from "expo-router";
+import Navbar from "../components/navbar";
 
 const FreeBooks = () => {
   const [books, setBooks] = useState([]);
@@ -36,7 +38,6 @@ const FreeBooks = () => {
         <View style={styles.contentContainer}>
           <Text style={styles.title}>{item.title}</Text>
           <Text>{item.subjects.join(", ")}</Text>
-          <Text >{item.authors[0]}</Text>
           <Text style={styles.rating}>Rating: {item.download_count}</Text>
           <TouchableOpacity
             style={styles.button}
@@ -50,18 +51,24 @@ const FreeBooks = () => {
   };
 
   return (
-    <View>
-      <Text>Free Books</Text>
-      <TextInput
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
-        onChangeText={(text) => setSearch(text)}
-        value={search}
-      />
-      <FlatList
-        data={books}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-      />
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={24} color="black" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            onChangeText={(text) => setSearch(text)}
+            value={search}
+          />
+        </View>
+        <FlatList
+          data={books}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+        />
+      </View>
+      <Navbar style={styles.navbar} />
     </View>
   );
 };
@@ -79,7 +86,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    margin: 10,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   coverImage: {
     width: 100,
@@ -87,7 +97,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 10,
+    paddingLeft: 10,
   },
   title: {
     fontSize: 18,
@@ -112,6 +122,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+  },
+  navbar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
 
