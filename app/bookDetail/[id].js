@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import { usePathname } from "expo-router";
 import HTML from "react-native-render-html";
+import Navbar from "../../components/navbar";
 
 const BookDetail = ({}) => {
   const pathname = usePathname();
@@ -28,38 +29,48 @@ const BookDetail = ({}) => {
   }
 
   return (
-    <ScrollView>
     <View style={styles.container}>
-      {book.volumeInfo && book.volumeInfo.imageLinks && (
-        <Image
-          source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
-          style={styles.image}
-        />
-      )}
-      {book.volumeInfo && book.volumeInfo.title && (
-        <Text style={styles.title}>{book.volumeInfo.title}</Text>
-      )}
-      {book.volumeInfo && book.volumeInfo.authors && (
-        <Text style={styles.author} ellipsizeMode="tail">
-          {book.volumeInfo.authors[0]}
-        </Text>
-      )}
-
-      {book.volumeInfo && book.volumeInfo.description && (
-        <HTML source={{ html: book.volumeInfo.description }} />
-      )}
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <View style={styles.content}>
+          {book.volumeInfo && book.volumeInfo.imageLinks && (
+            <Image
+              source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
+              style={styles.image}
+            />
+          )}
+          {book.volumeInfo && book.volumeInfo.title && (
+            <Text style={styles.title}>{book.volumeInfo.title}</Text>
+          )}
+          {book.volumeInfo && book.volumeInfo.authors && (
+            <Text style={styles.author} ellipsizeMode="tail">
+              {book.volumeInfo.authors[0]}
+            </Text>
+          )}
+          {book.volumeInfo && book.volumeInfo.description && (
+            <HTML source={{ html: book.volumeInfo.description }} />
+          )}
+        </View>
+      </ScrollView>
+      <Navbar style={styles.navbar} />
     </View>
-    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '%80',
-    marginRight: 16,
-    marginLeft: 16,
+    flex: 1,
+
+    marginHorizontal: 20,
+  },
+  contentContainer: {
+    flexGrow: 1,
+  },
+  content: {
     alignItems: 'center',
     justifyContent: 'center',
+    flexGrow: 1,
+    paddingVertical: 20,
+    gap: 20,
   },
   image: {
     width: 190,
@@ -77,18 +88,12 @@ const styles = StyleSheet.create({
     color: "#A3A3A3",
     textAlign: 'center',
   },
-
-  topic: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: '#663300',
-    textAlign: 'left',
-
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
-
-
-
 });
 
 export default BookDetail;

@@ -9,15 +9,11 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Image } from "react-native";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut,
-  deleteUser,
-} from "firebase/auth";
-import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
+import { getAuth, signOut, deleteUser } from "firebase/auth";
+import { getFirestore, collection } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import { router } from "expo-router";
+import Navbar from "../components/navbar";
 
 const ProfilePage = () => {
   // TAKE the user's gender from the database and display the appropriate image here
@@ -110,127 +106,130 @@ const ProfilePage = () => {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.ScrollViewContent}>
+        <View style={styles.container}>
+          <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
 
-        <TouchableOpacity onPress={handleLogOut}>
-          <Image
-            source={require("../assets/logout.png")}
-            style={{ width: 30, height: 30 }}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.container}>
-        {userGender === "Male" ? (
-          <Image
-            source={require("../assets/boy.png")}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-        ) : userGender === "Female" ? (
-          <Image
-            source={require("../assets/girl.png")}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-        ) : (
-          <Image
-            source={require("../assets/book.png")}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-        )}
-        {!userName && <Text style={styles.profileName}> Hi booklover!</Text>}
-        <Text style={styles.profileName}> {userName} </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Change Theme</Text>
-        <View style={styles.privacySettings}>
-          <Text style={styles.privacyText}>Dark</Text>
-          <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={user.isPublic ? "#f5dd4b" : "#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={togglePrivacy}
-            value={user.isPublic}
-          />
-          <Text style={styles.privacyText}>Light</Text>
+          <TouchableOpacity onPress={handleLogOut}>
+            <Image
+              source={require("../assets/logout.png")}
+              style={{ width: 30, height: 30 }}
+            />
+          </TouchableOpacity>
         </View>
-        <Text style={styles.sectionTitle}>Activity Visibility</Text>
-        <Picker
-          selectedValue={user.activityVisibility}
-          onValueChange={handleVisibilityChange}
-        >
-          <Picker.Item label="Public" value="Public" />
-          <Picker.Item label="Friends" value="Friends" />
-          <Picker.Item label="Private" value="Private" />
-        </Picker>
-      </View>
-
-      {/* give me a straight line like hr */}
-      <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Books Read</Text>
-        <View style={styles.progressBar}>
-          <View
-            style={{
-              backgroundColor: "#6a5acd",
-              height: 10,
-              width: `${(user.booksRead / 10) * 100}%`,
-            }}
-          />
+        <View style={styles.container}>
+          {userGender === "Male" ? (
+            <Image
+              source={require("../assets/boy.png")}
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            />
+          ) : userGender === "Female" ? (
+            <Image
+              source={require("../assets/girl.png")}
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            />
+          ) : (
+            <Image
+              source={require("../assets/book.png")}
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            />
+          )}
+          {!userName && <Text style={styles.profileName}> Hi booklover!</Text>}
+          <Text style={styles.profileName}> {userName} </Text>
         </View>
-        <Text>{user.booksRead} out of 10 books read</Text>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Words Saved</Text>
-        <View style={styles.progressBar}>
-          <View
-            style={{
-              backgroundColor: "#6a5acd",
-              height: 10,
-              width: `${(user.wordsSaved / 10000) * 100}%`,
-            }}
-          />
-        </View>
-        <Text>{user.wordsSaved} out of 10000 words saved</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Comment Made</Text>
-        <View style={styles.progressBar}>
-          <View
-            style={{
-              backgroundColor: "#6a5acd",
-              height: 10,
-              width: `${(user.wordsSaved / 10000) * 100}%`,
-            }}
-          />
-        </View>
-        <Text>{user.wordsSaved} comments made</Text>
-      </View>
-      <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Friend Recommendations</Text>
-        <Text>Suggested Friends: Friend 3, Friend 4</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Achievements and Badges</Text>
-        {user.achievements.map((achievement, index) => (
-          <View key={index} style={styles.achievementItem}>
-            <Text style={styles.achievementText}>{achievement}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Change Theme</Text>
+          <View style={styles.privacySettings}>
+            <Text style={styles.privacyText}>Dark</Text>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={user.isPublic ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={togglePrivacy}
+              value={user.isPublic}
+            />
+            <Text style={styles.privacyText}>Light</Text>
           </View>
-        ))}
-      </View>
+          <Text style={styles.sectionTitle}>Activity Visibility</Text>
+          <Picker
+            selectedValue={user.activityVisibility}
+            onValueChange={handleVisibilityChange}
+          >
+            <Picker.Item label="Public" value="Public" />
+            <Picker.Item label="Friends" value="Friends" />
+            <Picker.Item label="Private" value="Private" />
+          </Picker>
+        </View>
 
-      {userName && (
-        <TouchableOpacity onPress={handleDelete}>
-          <Text style={styles.button}> Clich here for delete account </Text>
-        </TouchableOpacity>
-      )}
-    </ScrollView>
+        {/* give me a straight line like hr */}
+        <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Books Read</Text>
+          <View style={styles.progressBar}>
+            <View
+              style={{
+                backgroundColor: "#6a5acd",
+                height: 10,
+                width: `${(user.booksRead / 10) * 100}%`,
+              }}
+            />
+          </View>
+          <Text>{user.booksRead} out of 10 books read</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Words Saved</Text>
+          <View style={styles.progressBar}>
+            <View
+              style={{
+                backgroundColor: "#6a5acd",
+                height: 10,
+                width: `${(user.wordsSaved / 10000) * 100}%`,
+              }}
+            />
+          </View>
+          <Text>{user.wordsSaved} out of 10000 words saved</Text>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Comment Made</Text>
+          <View style={styles.progressBar}>
+            <View
+              style={{
+                backgroundColor: "#6a5acd",
+                height: 10,
+                width: `${(user.wordsSaved / 10000) * 100}%`,
+              }}
+            />
+          </View>
+          <Text>{user.wordsSaved} comments made</Text>
+        </View>
+        <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Friend Recommendations</Text>
+          <Text>Suggested Friends: Friend 3, Friend 4</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Achievements and Badges</Text>
+          {user.achievements.map((achievement, index) => (
+            <View key={index} style={styles.achievementItem}>
+              <Text style={styles.achievementText}>{achievement}</Text>
+            </View>
+          ))}
+        </View>
+
+        {userName && (
+          <TouchableOpacity onPress={handleDelete}>
+            <Text style={styles.button}> Clich here for delete account </Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+      <Navbar />
+    </View>
   );
 };
 
@@ -242,7 +241,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 30,
     padding: 20,
-    // give a background color and blur the background image to make the text more readable
     backgroundColor: "white",
     borderBottomWidth: 1,
     borderBottomColor: "#d3d3d3",
