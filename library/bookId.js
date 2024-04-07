@@ -6,7 +6,7 @@ export async function fetchBooksIdFromGoogleAPI(id) {
       const response = await fetch(url);
       const data = await response.json();
   
-      console.log(data);
+  
   
       if (data) {
         return data; // Book details for the specified ID

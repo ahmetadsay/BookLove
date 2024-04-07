@@ -11,7 +11,6 @@ export async function fetchBooksFromGoogleAPI(searchQuery, selectedCategory) {
       const response = await fetch(url);
       const data = await response.json();
 
-        console.log(data);
   
       if (data.items) {
         return data.items; // Array of books

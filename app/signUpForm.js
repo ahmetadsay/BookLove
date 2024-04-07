@@ -59,11 +59,9 @@ const SignUpForm = () => {
         gender: gender,
       });
 
-      console.log("Document written with ID: ", docRef.id);
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
 
       // Handle error
     }

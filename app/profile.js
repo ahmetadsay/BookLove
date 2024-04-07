@@ -76,11 +76,11 @@ const ProfilePage = () => {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        console.log("User signed out");
+        
         router.push("/login");
       })
       .catch((error) => {
-        console.log(error);
+        
       });
   };
 
@@ -97,11 +97,9 @@ const ProfilePage = () => {
     const currentUser = auth.currentUser;
     deleteUser(currentUser)
       .then(() => {
-        console.log("User deleted");
         router.push("/login");
       })
       .catch((error) => {
-        console.log(error);
       });
   };
 

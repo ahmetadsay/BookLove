@@ -72,10 +72,9 @@ const Home = () => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
         setUserName(user.displayName);
       } else {
-        console.log("user is not logged in");
+    
       }
     });
   }, []);

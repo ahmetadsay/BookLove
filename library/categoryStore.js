@@ -11,7 +11,7 @@ export async function fetchCategoriesFromGoogleAPI(selectedCategory) {
 
 
   
-      console.log(data);
+  
   
       if (data.items) {
         return data.items; // Array of books

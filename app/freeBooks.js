@@ -21,7 +21,6 @@ const FreeBooks = () => {
       .then((response) => response.json())
       .then((data) => {
         setBooks(data.results);
-        console.log(data.results);
       })
       .catch((error) => {
         console.error(error);
