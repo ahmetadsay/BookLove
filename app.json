@@ -44,6 +44,14 @@
           "cameraPermission": "Allow BookLoved to use your camera ?"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c30866c0-56fc-4ac7-a33e-112e18ecf8a5"
+      }
+    }
   }
 }
