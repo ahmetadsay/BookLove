@@ -20,7 +20,7 @@
         "NSCameraUsageDescription": "Allow BookLoved to use your camera ?",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.anonymous.BookLoved"
+      "bundleIdentifier": "com.bookloved.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +30,8 @@
       "permissions": [
         "android.permission.CAMERA"
       ],
-      "package": "com.anonymous.BookLoved"
+      "package": "com.bookloved.app",
+      "versionCode": 1.0
     },
     "scheme": "BookLoved",
     "web": {
