@@ -10,10 +10,12 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Picker } from "@react-native-picker/picker";
 import { auth, db } from "../firebase/firebase";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -30,6 +32,10 @@ const signUpSchema = Yup.object().shape({
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const goBack = () => {
+    router.back();
+  };
 
   const handleSubmit = async (values) => {
     const displayName = values.name;
@@ -58,7 +64,6 @@ const SignUpForm = () => {
         email: email,
         gender: gender,
       });
-
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -69,6 +74,9 @@ const SignUpForm = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={goBack}>
+        <Ionicons name="arrow-back-outline" size={32} color="black" />
+      </TouchableOpacity>
       <Text style={styles.title}>Sign Up</Text>
       <Text style={styles.subtitle}>
         Create an account to start discovering and sharing books
@@ -178,23 +186,7 @@ const SignUpForm = () => {
               )}
             </View>
 
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity
-                style={styles.checkbox}
-                onPress={() =>
-                  handleChange("agreeToTerms")(!values.agreeToTerms)
-                }
-              >
-                {values.agreeToTerms && (
-                  <MaterialIcons name="check" size={24} color="#007AFF" />
-                )}
-              </TouchableOpacity>
-
-              <Text style={styles.checkboxLabel}>
-                I agree to the terms and conditions
-              </Text>
-            </View>
-
+        
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>

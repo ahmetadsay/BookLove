@@ -145,9 +145,7 @@ const Login = () => {
         </View>
 
         {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
-        <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
-        </TouchableOpacity>
+  
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
