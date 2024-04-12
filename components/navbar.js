@@ -4,17 +4,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { TouchableOpacity } from "react-native";
 
-
-
 const Navbar = () => {
-
- const goBack = () => {
+  const goBack = () => {
     router.back();
   };
 
   return (
     <View style={styles.navbar}>
-      <Ionicons name="home" size={32} color="black" />
+      <TouchableOpacity onPress={() => router.push("home")}>
+  
+        <Ionicons name="home" size={32} color="black" />
+      </TouchableOpacity>
+
       <TouchableOpacity onPress={() => router.push("profile")}>
         <Ionicons name="person-outline" size={32} color="black" />
       </TouchableOpacity>
@@ -22,10 +23,10 @@ const Navbar = () => {
         <Ionicons name="add-circle-outline" size={48} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => router.push("freeBooks")}>
-      <Ionicons name="book-outline" size={32} color="black" />
+        <Ionicons name="book-outline" size={32} color="black" />
       </TouchableOpacity>
       <TouchableOpacity onPress={goBack}>
-      <Ionicons name="arrow-back-outline" size={32} color="black" />
+        <Ionicons name="arrow-back-outline" size={32} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -33,7 +34,7 @@ const Navbar = () => {
 
 const styles = StyleSheet.create({
   navbar: {
-    position : "sticky",
+    position: "sticky",
     bottom: 0,
     left: 0,
     right: 0,

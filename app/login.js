@@ -154,7 +154,6 @@ const Login = () => {
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
 
-        {/* give me a straight line  */}
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={{ flex: 1, height: 1, backgroundColor: "#000" }} />
@@ -211,6 +210,13 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
+
+  error: {
+    color: "red",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  
   button: {
     backgroundColor: "#23527C",
     borderRadius: 5,

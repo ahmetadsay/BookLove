@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   content: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     flexGrow: 1,
     paddingVertical: 20,
     gap: 20,
@@ -81,15 +81,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    textAlign: 'center',
+    textAlign: "center",
   },
   author: {
     fontSize: 16,
     color: "#A3A3A3",
-    textAlign: 'center',
+    textAlign: "center",
   },
   navbar: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
