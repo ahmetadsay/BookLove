@@ -13,7 +13,7 @@ import HTML from "react-native-render-html";
 import Navbar from "../../components/navbar";
 import { db } from "../../firebase/firebase";
 import { getAuth } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 const BookDetail = ({}) => {
   const pathname = usePathname();
@@ -37,29 +37,31 @@ const BookDetail = ({}) => {
     fetchBook();
   }, [id]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const commentsRef = collection(db, "comments");
+        const q = query(commentsRef, where("bookId", "==", id));
+        const querySnapshot = await getDocs(q);
+        const fetchedComments = [];
+        querySnapshot.forEach((doc) => {
+          fetchedComments.push({ id: doc.id, ...doc.data() });
+        });
+        setComments(fetchedComments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+    fetchComments();
+  }, [id]);
+
   if (!book) {
     return null;
   }
 
-  // useEffect(() => {
-  //   const unsubscribe = db
-  //     .collection("comments")
-  //     .where("bookId", "==", id)
-  //     .onSnapshot((snapshot) => {
-  //       const fetchedComments = [];
-  //       snapshot.forEach((doc) => {
-  //         fetchedComments.push({ id: doc.id, ...doc.data() });
-  //       });
-  //       setComments(fetchedComments);
-  //     });
-
-  //   return () => unsubscribe(); // This line should be inside the useEffect hook
-  // }, [id]);
-
   const handleAddComment = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
-    console.log(user);
     if (!user) {
       // Handle case when user is not authenticated
       return;
@@ -72,10 +74,10 @@ const BookDetail = ({}) => {
         text: newComment,
       });
 
-      console.log('user.uid', user.uid)
-
       // Clear the input field after adding the comment
       setNewComment("");
+      // After adding a new comment, refetch comments to update the UI
+      fetchComments();
     } catch (error) {
       console.error("Error adding comment:", error);
     }
@@ -126,7 +128,6 @@ const BookDetail = ({}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     marginHorizontal: 20,
   },
   contentContainer: {
