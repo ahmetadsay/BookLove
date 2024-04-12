@@ -1,13 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Button,
+} from "react-native";
 import { usePathname } from "expo-router";
 import HTML from "react-native-render-html";
 import Navbar from "../../components/navbar";
+import { db } from "../../firebase/firebase";
+import { getAuth } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 
 const BookDetail = ({}) => {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const [book, setBook] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -27,6 +40,46 @@ const BookDetail = ({}) => {
   if (!book) {
     return null;
   }
+
+  // useEffect(() => {
+  //   const unsubscribe = db
+  //     .collection("comments")
+  //     .where("bookId", "==", id)
+  //     .onSnapshot((snapshot) => {
+  //       const fetchedComments = [];
+  //       snapshot.forEach((doc) => {
+  //         fetchedComments.push({ id: doc.id, ...doc.data() });
+  //       });
+  //       setComments(fetchedComments);
+  //     });
+
+  //   return () => unsubscribe(); // This line should be inside the useEffect hook
+  // }, [id]);
+
+  const handleAddComment = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    console.log(user);
+    if (!user) {
+      // Handle case when user is not authenticated
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "comments"), {
+        userId: user.uid,
+        bookId: id,
+        text: newComment,
+      });
+
+      console.log('user.uid', user.uid)
+
+      // Clear the input field after adding the comment
+      setNewComment("");
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -50,6 +103,20 @@ const BookDetail = ({}) => {
             <HTML source={{ html: book.volumeInfo.description }} />
           )}
         </View>
+        {comments.map((comment) => (
+          <View key={comment.id}>
+            <Text>{comment.text}</Text>
+          </View>
+        ))}
+
+        {/* Add comment form */}
+        <TextInput
+          placeholder="Add a comment"
+          value={newComment}
+          onChangeText={(text) => setNewComment(text)}
+          style={styles.commentInput}
+        />
+        <Button title="Add Comment" onPress={handleAddComment} />
       </ScrollView>
       <Navbar style={styles.navbar} />
     </View>

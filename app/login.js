@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Button,
+
 } from "react-native";
 import { router } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  
+
   button: {
     backgroundColor: "#23527C",
     borderRadius: 5,
