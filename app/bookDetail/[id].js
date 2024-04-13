@@ -72,6 +72,7 @@ const BookDetail = ({}) => {
         userId: user.uid,
         bookId: id,
         text: newComment,
+        name: user.displayName,
       });
 
       // Clear the input field after adding the comment
@@ -105,8 +106,10 @@ const BookDetail = ({}) => {
             <HTML source={{ html: book.volumeInfo.description }} />
           )}
         </View>
+
+        <Text style ={{ fontFamily:'', fontSize:24, fontStyle:'italic' }}> Comments </Text>
         {comments.map((comment) => (
-          <View key={comment.id}>
+          <View style={styles.comment} key={comment.id}>
             <Text>{comment.text}</Text>
           </View>
         ))}
@@ -161,6 +164,30 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+  },
+
+  comment: {
+    padding: 10,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    borderRadius: 10,
+    backgroundColor: "white",
+    borderColor: "#d3d3d3",
+    borderWidth: 1,
+  },
+  commentInput: {
+    marginBottom: 10,
+    borderRadius: 5,
+    padding: 10,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "gray",
+    height: 80,
+    borderBlockColor: "#d3d3d3",
+    borderBlockWidth: 1,
+    borderColor: "#d3d3d3",
+    borderWidth: 1,
   },
 });
 
