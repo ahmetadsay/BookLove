@@ -110,6 +110,8 @@ const BookDetail = ({}) => {
         <Text style ={{ fontFamily:'', fontSize:24, fontStyle:'italic' }}> Comments </Text>
         {comments.map((comment) => (
           <View style={styles.comment} key={comment.id}>
+             <Text style={styles.commentOwner}>{comment.name}</Text>
+             {console.log(comment.displayName)}
             <Text>{comment.text}</Text>
           </View>
         ))}
