@@ -107,12 +107,23 @@ const BookDetail = ({}) => {
           )}
         </View>
 
-        <Text style ={{ fontFamily:'', fontSize:24, fontStyle:'italic' }}> Comments </Text>
+        <Text style={{ fontFamily: "", fontSize: 24, fontStyle: "italic" }}>
+          {" "}
+          Comments{" "}
+        </Text>
         {comments.map((comment) => (
-          <View style={styles.comment} key={comment.id}>
-             <Text style={styles.commentOwner}>{comment.name}</Text>
-             {console.log(comment.displayName)}
-            <Text>{comment.text}</Text>
+          <View>
+            <View style={styles.comment} key={comment.id}>
+              <Image
+                source={require("../../assets/girl.png")}
+                style={{ width: 50, height: 50, borderRadius: 50 }}
+              />
+              <View style={{ gap:10 }}>
+                <Text style={styles.commentOwner}>{comment.name}</Text>
+                <Text>{comment.text}</Text>
+              </View>
+            </View>
+            <View style={styles.seperator}></View>
           </View>
         ))}
 
@@ -169,13 +180,13 @@ const styles = StyleSheet.create({
   },
 
   comment: {
+    flex: 1,
     padding: 10,
     marginHorizontal: 20,
     marginVertical: 10,
     borderRadius: 10,
-    backgroundColor: "white",
-    borderColor: "#d3d3d3",
-    borderWidth: 1,
+    flexDirection: "row",
+    gap: 20,
   },
   commentInput: {
     marginBottom: 10,
@@ -190,6 +201,19 @@ const styles = StyleSheet.create({
     borderBlockWidth: 1,
     borderColor: "#d3d3d3",
     borderWidth: 1,
+  },
+
+  commentOwner: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "gray",
+  },
+
+  seperator: {
+    height: 1,
+    width: "100%", // Corrected property name
+    backgroundColor: "#ddd",
+    marginBottom: 10,
   },
 });
 
