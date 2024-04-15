@@ -115,8 +115,8 @@ const BookDetail = ({}) => {
           <View>
             <View style={styles.comment} key={comment.id}>
               <Image
-                source={require("../../assets/girl.png")}
-                style={{ width: 50, height: 50, borderRadius: 50 }}
+                source={require("../../assets/profileIcon.png")}
+                style={{ width: 80, height: 80, borderRadius: 50 }}
               />
               <View style={{ gap:10 }}>
                 <Text style={styles.commentOwner}>{comment.name}</Text>

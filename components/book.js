@@ -16,7 +16,7 @@ const Book = ({ book }) => {
   // Provide the image source based on whether thumbnail exists or not
   const imageSource = book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail
     ? { uri: book.volumeInfo.imageLinks.thumbnail }
-    : require("../assets/bookCover.png"); // Fallback image path
+    : require("../assets/thebook.png"); // Fallback image path
 
   return (
     <View style={styles.container}>
