@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { usePathname } from 'expo-router';
+import Navbar from '../../components/navbar';
 
 
 const BookReader = () => {
@@ -25,6 +26,7 @@ const BookReader = () => {
         style={{ ...styles.webview, display: loading ? 'none' : 'flex' }}
         onLoad={() => setLoading(false)}
       />
+      <Navbar />
     </View>
   );
 };

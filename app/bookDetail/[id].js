@@ -7,6 +7,8 @@ import {
   ScrollView,
   TextInput,
   Button,
+  Modal,
+  TouchableOpacity,
 } from "react-native";
 import { usePathname } from "expo-router";
 import HTML from "react-native-render-html";
@@ -21,6 +23,7 @@ const BookDetail = ({}) => {
   const [book, setBook] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -55,6 +58,21 @@ const BookDetail = ({}) => {
     fetchComments();
   }, [id]);
 
+  const fetchComments = async () => {
+    try {
+      const commentsRef = collection(db, "comments");
+      const q = query(commentsRef, where("bookId", "==", id));
+      const querySnapshot = await getDocs(q);
+      const fetchedComments = [];
+      querySnapshot.forEach((doc) => {
+        fetchedComments.push({ id: doc.id, ...doc.data() });
+      });
+      setComments(fetchedComments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
   if (!book) {
     return null;
   }
@@ -63,7 +81,8 @@ const BookDetail = ({}) => {
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
-      // Handle case when user is not authenticated
+      // Show Modal if user is not authenticated
+      setShowModal(true);
       return;
     }
 
@@ -116,7 +135,7 @@ const BookDetail = ({}) => {
             <View style={styles.comment} key={comment.id}>
               <Image
                 source={require("../../assets/profileIcon.png")}
-                style={{ width: 80, height: 80, borderRadius: 50 }}
+                style={{ width: 50, height: 50, borderRadius: 50 }}
               />
               <View style={{ gap:10 }}>
                 <Text style={styles.commentOwner}>{comment.name}</Text>
@@ -135,6 +154,28 @@ const BookDetail = ({}) => {
           style={styles.commentInput}
         />
         <Button title="Add Comment" onPress={handleAddComment} />
+
+        {/* Modal for authentication */}
+        <Modal
+          visible={showModal}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowModal(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                You should sign-up for adding comment
+              </Text>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setShowModal(false)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
       <Navbar style={styles.navbar} />
     </View>
@@ -215,6 +256,34 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     marginBottom: 10,
   },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
 });
 
 export default BookDetail;
+

@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
   coverImage: {
     width: 100,
     borderRadius: 10,
+
   },
   contentContainer: {
     flex: 1,
