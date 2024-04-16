@@ -67,9 +67,9 @@ const SignUpForm = () => {
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-
-      // Handle error
     }
+
+    router.push("/home");
   };
 
   return (
@@ -186,7 +186,6 @@ const SignUpForm = () => {
               )}
             </View>
 
-        
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
-    gap: 20,
+    gap: 10,
     marginHorizontal: 20,
   },
   pickerContainer: {
@@ -227,7 +226,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
-    marginBottom: 10,
     borderRadius: 5,
   },
   input2: {
@@ -236,7 +234,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
-    marginBottom: 10,
     borderRadius: 5,
   },
 
@@ -248,13 +245,13 @@ const styles = StyleSheet.create({
 
   error: {
     color: "red",
-    marginBottom: 10,
   },
   button: {
     backgroundColor: "#006661",
     padding: 10,
     borderRadius: 5,
     width: "80%",
+    marginTop: 20,
   },
   buttonText: {
     color: "#fff",

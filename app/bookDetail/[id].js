@@ -85,7 +85,14 @@ const BookDetail = ({}) => {
       setShowModal(true);
       return;
     }
-
+  
+    // Validate comment text
+    if (!newComment.trim()) {
+      // Show error message or alert
+      alert("Please enter a comment before submitting.");
+      return;
+    }
+  
     try {
       await addDoc(collection(db, "comments"), {
         userId: user.uid,
@@ -93,7 +100,7 @@ const BookDetail = ({}) => {
         text: newComment,
         name: user.displayName,
       });
-
+  
       // Clear the input field after adding the comment
       setNewComment("");
       // After adding a new comment, refetch comments to update the UI
@@ -102,6 +109,7 @@ const BookDetail = ({}) => {
       console.error("Error adding comment:", error);
     }
   };
+  
 
   return (
     <View style={styles.container}>

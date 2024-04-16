@@ -2,7 +2,7 @@
   "expo": {
     "name": "BookLoved",
     "slug": "BookLoved",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,7 +31,7 @@
         "android.permission.CAMERA"
       ],
       "package": "com.bookloved.app",
-      "versionCode": 2.0,
+      "versionCode": 3.0,
     },
     "scheme": "BookLoved",
     "web": {
