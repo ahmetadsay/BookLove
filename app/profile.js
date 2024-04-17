@@ -6,20 +6,65 @@ import {
   TouchableOpacity,
   StyleSheet,
   Switch,
+  Button,
+  Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Image } from "react-native";
 import { getAuth, signOut, deleteUser } from "firebase/auth";
-import { getFirestore, collection } from "firebase/firestore";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { query, where, getDocs } from "firebase/firestore";
 import { router } from "expo-router";
 import Navbar from "../components/navbar";
+import { ContributionGraph } from "react-native-chart-kit";
+import { serverTimestamp } from "firebase/firestore";
 
 const ProfilePage = () => {
   // TAKE the user's gender from the database and display the appropriate image here
 
   const [userGender, setUserGender] = useState("");
   const [userName, setUserName] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [readingData, setReadingData] = useState([]);
+
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  useEffect(() => {
+    const fetchReadingData = async () => {
+      const db = getFirestore();
+      const readingCollection = collection(db, "userReading");
+      const userReadingQuery = query(
+        readingCollection,
+        where("userId", "==", currentUser.uid)
+      );
+      const querySnapshot = await getDocs(userReadingQuery);
+      const data = querySnapshot.docs.map((doc) => {
+        const reading = doc.data();
+        return { date: reading.date.toDate(), count: 1 };
+      });
+      setReadingData(data);
+    };
+
+    fetchReadingData();
+  }, [currentUser.uid]);
+
+  const handleReadBook = async () => {
+    // Add a new reading record for the current day
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    const db = getFirestore();
+    const readingCollection = collection(db, "userReading");
+    await addDoc(readingCollection, {
+      userId: currentUser.uid,
+      date: serverTimestamp(),
+    });
+
+    // Close the modal and refresh the reading data
+    setShowModal(false);
+    fetchReadingData();
+  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -76,12 +121,9 @@ const ProfilePage = () => {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        
         router.push("/login");
       })
-      .catch((error) => {
-        
-      });
+      .catch((error) => {});
   };
 
   const togglePrivacy = () => {
@@ -99,8 +141,7 @@ const ProfilePage = () => {
       .then(() => {
         router.push("/login");
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   };
 
   return (
@@ -150,76 +191,37 @@ const ProfilePage = () => {
             />
             <Text style={styles.privacyText}>Light</Text>
           </View>
-          <Text style={styles.sectionTitle}>Activity Visibility</Text>
-          <Picker
-            selectedValue={user.activityVisibility}
-            onValueChange={handleVisibilityChange}
-          >
-            <Picker.Item label="Public" value="Public" />
-            <Picker.Item label="Friends" value="Friends" />
-            <Picker.Item label="Private" value="Private" />
-          </Picker>
         </View>
 
-        {/* give me a straight line like hr */}
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
+          <Text style={styles.sectionTitle}>Reading Progress</Text>
+        
+          
+        <ContributionGraph
+          values={readingData}
+          endDate={new Date()}
+          numDays={105}
+          width="100%"
+          height={220}
+          chartConfig={{
+            backgroundColor: "#d3d3d3",
+            backgroundGradientFrom: "#fff",
+            backgroundGradientTo: "#fff",
+            decimalPlaces: 2, // optional, defaults to 2dp
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Books Read</Text>
-          <View style={styles.progressBar}>
-            <View
-              style={{
-                backgroundColor: "#6a5acd",
-                height: 10,
-                width: `${(user.booksRead / 10) * 100}%`,
-              }}
-            />
-          </View>
-          <Text>{user.booksRead} out of 10 books read</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Words Saved</Text>
-          <View style={styles.progressBar}>
-            <View
-              style={{
-                backgroundColor: "#6a5acd",
-                height: 10,
-                width: `${(user.wordsSaved / 10000) * 100}%`,
-              }}
-            />
-          </View>
-          <Text>{user.wordsSaved} out of 10000 words saved</Text>
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Comment Made</Text>
-          <View style={styles.progressBar}>
-            <View
-              style={{
-                backgroundColor: "#6a5acd",
-                height: 10,
-                width: `${(user.wordsSaved / 10000) * 100}%`,
-              }}
-            />
-          </View>
-          <Text>{user.wordsSaved} comments made</Text>
-        </View>
+            color: (opacity = 1) => `rgba(0, 20, 0, ${opacity})`,
+            style: {
+              borderRadius: 4,
+            },
+          }}
+        />
+        <TouchableOpacity onPress={() => setShowModal(true)}>
+          <Text style={styles.button}>
+            Add Reading Progress
+          </Text>
+        </TouchableOpacity> 
+        
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Friend Recommendations</Text>
-          <Text>Suggested Friends: Friend 3, Friend 4</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Achievements and Badges</Text>
-          {user.achievements.map((achievement, index) => (
-            <View key={index} style={styles.achievementItem}>
-              <Text style={styles.achievementText}>{achievement}</Text>
-            </View>
-          ))}
-        </View>
-
         {userName && (
           <TouchableOpacity onPress={handleDelete}>
             <Text style={styles.button}> Clich here for delete account </Text>
