@@ -31,24 +31,27 @@ const ProfilePage = () => {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
-  useEffect(() => {
-    const fetchReadingData = async () => {
-      const db = getFirestore();
-      const readingCollection = collection(db, "userReading");
-      const userReadingQuery = query(
-        readingCollection,
-        where("userId", "==", currentUser.uid)
-      );
-      const querySnapshot = await getDocs(userReadingQuery);
-      const data = querySnapshot.docs.map((doc) => {
-        const reading = doc.data();
-        return { date: reading.date.toDate(), count: 1 };
-      });
-      setReadingData(data);
-    };
+ 
+  const fetchReadingData = async () => {
+    const db = getFirestore();
+    const readingCollection = collection(db, "userReading");
+    const userReadingQuery = query(
+      readingCollection,
+      where("userId", "==", currentUser.uid)
+    );
+    const querySnapshot = await getDocs(userReadingQuery);
+    const data = querySnapshot.docs.map((doc) => {
+      const reading = doc.data();
+      return { date: reading.date.toDate(), count: 1 };
+    });
+    setReadingData(data);
+  };
 
+  useEffect(() => {
+    // Fetch reading data when component mounts
     fetchReadingData();
   }, [currentUser.uid]);
+
 
   const handleReadBook = async () => {
     // Add a new reading record for the current day
@@ -64,6 +67,9 @@ const ProfilePage = () => {
     // Close the modal and refresh the reading data
     setShowModal(false);
     fetchReadingData();
+
+    // Alert the user
+    alert("Successfully added!");
   };
 
   useEffect(() => {
@@ -194,9 +200,8 @@ const ProfilePage = () => {
         </View>
 
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-          <Text style={styles.sectionTitle}>Reading Progress</Text>
-        
-          
+        <Text style={styles.sectionTitle}>Reading Progress</Text>
+
         <ContributionGraph
           values={readingData}
           endDate={new Date()}
@@ -216,11 +221,9 @@ const ProfilePage = () => {
           }}
         />
         <TouchableOpacity onPress={() => setShowModal(true)}>
-          <Text style={styles.button}>
-            Add Reading Progress
-          </Text>
-        </TouchableOpacity> 
-        
+          <Text style={styles.button}>Add Reading Progress</Text>
+        </TouchableOpacity>
+
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
         {userName && (
           <TouchableOpacity onPress={handleDelete}>
@@ -229,9 +232,30 @@ const ProfilePage = () => {
         )}
       </ScrollView>
       <Navbar />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => {
+          setShowModal(!showModal);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Did you read a book today?</Text>
+            <Button onPress={handleReadBook} title="Yes" color="#841584" />
+            <Button
+              onPress={() => setShowModal(false)}
+              title="No"
+              color="#841584"
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -293,6 +317,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "white",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
 
