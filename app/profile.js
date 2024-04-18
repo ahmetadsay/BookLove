@@ -20,8 +20,6 @@ import { ContributionGraph } from "react-native-chart-kit";
 import { serverTimestamp } from "firebase/firestore";
 
 const ProfilePage = () => {
-  // TAKE the user's gender from the database and display the appropriate image here
-
   const [userGender, setUserGender] = useState("");
   const [userName, setUserName] = useState("");
 
@@ -217,6 +215,7 @@ const ProfilePage = () => {
         </View>
 
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
+        <View style={styles.section}>
         <Text style={styles.sectionTitle}>Reading Progress</Text>
 
         <ContributionGraph
@@ -240,6 +239,7 @@ const ProfilePage = () => {
         <TouchableOpacity onPress={handleReadBook}>
           <Text style={styles.button}>Add Reading Progress</Text>
         </TouchableOpacity>
+        </View>
 
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
         {userName && (
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    gap: 20,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
