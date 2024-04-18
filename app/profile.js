@@ -31,47 +31,64 @@ const ProfilePage = () => {
   const auth = getAuth();
   const currentUser = auth.currentUser;
 
- 
-  const fetchReadingData = async () => {
-    const db = getFirestore();
-    const readingCollection = collection(db, "userReading");
-    const userReadingQuery = query(
-      readingCollection,
-      where("userId", "==", currentUser.uid)
-    );
-    const querySnapshot = await getDocs(userReadingQuery);
-    const data = querySnapshot.docs.map((doc) => {
-      const reading = doc.data();
-      return { date: reading.date.toDate(), count: 1 };
-    });
-    setReadingData(data);
-  };
-
   useEffect(() => {
-    // Fetch reading data when component mounts
-    fetchReadingData();
-  }, [currentUser.uid]);
+    const fetchReadingData = async () => {
+      const db = getFirestore();
+      const readingCollection = collection(db, "userReading");
+      const userReadingQuery = query(
+        readingCollection,
+        where("userId", "==", currentUser.uid)
+      );
+      const querySnapshot = await getDocs(userReadingQuery);
+      const data = querySnapshot.docs.map((doc) => {
+        const reading = doc.data();
+        return { date: reading.date.toDate(), count: 1 };
+      });
+      setReadingData(data);
+    };
 
+    if (currentUser) {
+      fetchReadingData();
+    }
+  }, [currentUser]);
 
-  const handleReadBook = async () => {
-    // Add a new reading record for the current day
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    const db = getFirestore();
-    const readingCollection = collection(db, "userReading");
-    await addDoc(readingCollection, {
-      userId: currentUser.uid,
-      date: serverTimestamp(),
-    });
-
-    // Close the modal and refresh the reading data
-    setShowModal(false);
-    fetchReadingData();
-
-    // Alert the user
-    alert("Successfully added!");
+  const handleReadBook = () => {
+    if (!currentUser) {
+      // Alert non-users to sign up for this feature
+      alert("You should sign up for this feature.");
+    } else {
+      // Show the modal for reading progress
+      setShowModal(true);
+    }
   };
 
+  const handleAddReadingProgress = async () => {
+    if (currentUser) {
+      // Add a new reading record for the current day
+      const db = getFirestore();
+      const readingCollection = collection(db, "userReading");
+      await addDoc(readingCollection, {
+        userId: currentUser.uid,
+        date: serverTimestamp(),
+      });
+
+      // Close the modal and refresh the reading data
+      setShowModal(false);
+      const userReadingQuery = query(
+        readingCollection,
+        where("userId", "==", currentUser.uid)
+      );
+      const querySnapshot = await getDocs(userReadingQuery);
+      const data = querySnapshot.docs.map((doc) => {
+        const reading = doc.data();
+        return { date: reading.date.toDate(), count: 1 };
+      });
+      setReadingData(data);
+
+      // Alert the user
+      alert("Successfully added!");
+    }
+  };
   useEffect(() => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
@@ -220,7 +237,7 @@ const ProfilePage = () => {
             },
           }}
         />
-        <TouchableOpacity onPress={() => setShowModal(true)}>
+        <TouchableOpacity onPress={handleReadBook}>
           <Text style={styles.button}>Add Reading Progress</Text>
         </TouchableOpacity>
 
@@ -237,25 +254,20 @@ const ProfilePage = () => {
         transparent={true}
         visible={showModal}
         onRequestClose={() => {
-          setShowModal(!showModal);
+          setShowModal(false);
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Did you read a book today?</Text>
-            <Button onPress={handleReadBook} title="Yes" color="#841584" />
-            <Button
-              onPress={() => setShowModal(false)}
-              title="No"
-              color="#841584"
-            />
+            <Button onPress={handleAddReadingProgress} title="Yes" color="#841584" />
+            <Button onPress={() => setShowModal(false)} title="No" color="#841584" />
           </View>
         </View>
       </Modal>
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
