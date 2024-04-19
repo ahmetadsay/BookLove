@@ -35,8 +35,8 @@ const FreeBooks = () => {
           style={styles.coverImage}
         />
         <View style={styles.contentContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text>{item.subjects.join(", ")}</Text>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail' >{item.title}</Text>
+          <Text numberOfLines={3} ellipsizeMode='tail'>{item.subjects.join(", ")}</Text>
           <Text style={styles.rating}>Rating: {item.download_count}</Text>
           <TouchableOpacity
             style={styles.button}
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 20,
     marginVertical: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+
+
   },
   coverImage: {
     width: 100,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingLeft: 10,
+    padding: 10,
   },
   title: {
     fontSize: 18,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   button: {
-    backgroundColor: "#000",
+    backgroundColor: "#23527C",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,

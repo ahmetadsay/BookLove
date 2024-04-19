@@ -18,10 +18,13 @@ import { router } from "expo-router";
 import Navbar from "../components/navbar";
 import { ContributionGraph } from "react-native-chart-kit";
 import { serverTimestamp } from "firebase/firestore";
+import { ActivityIndicator } from "react-native";
 
 const ProfilePage = () => {
   const [userGender, setUserGender] = useState("");
   const [userName, setUserName] = useState("");
+  const [loading, setLoading] = useState(true); 
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [readingData, setReadingData] = useState([]);
@@ -49,6 +52,10 @@ const ProfilePage = () => {
       fetchReadingData();
     }
   }, [currentUser]);
+
+  const handleDeleteConfirmation = () => {
+    setShowDeleteConfirmation(true);
+  };
 
   const handleReadBook = () => {
     if (!currentUser) {
@@ -112,6 +119,9 @@ const ProfilePage = () => {
         })
         .catch((error) => {
           console.error("Error getting user data:", error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, []);
@@ -167,6 +177,9 @@ const ProfilePage = () => {
 
   return (
     <View style={{ flex: 1 }}>
+        {loading ? ( // Render a loading indicator
+      <ActivityIndicator size="large" color="#0000ff" />
+    ) : (
       <ScrollView contentContainerStyle={styles.ScrollViewContent}>
         <View style={styles.container}>
           <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
@@ -243,11 +256,28 @@ const ProfilePage = () => {
 
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
         {userName && (
-          <TouchableOpacity onPress={handleDelete}>
-            <Text style={styles.button}> Clich here for delete account </Text>
+          <TouchableOpacity onPress={handleDeleteConfirmation}>
+            <Text style={styles.button}> Click here for delete account </Text>
           </TouchableOpacity>
         )}
+            <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showDeleteConfirmation}
+            onRequestClose={() => {
+              setShowDeleteConfirmation(false);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                <Button onPress={handleDelete} title="Yes" color="#841584" />
+                <Button onPress={() => setShowDeleteConfirmation(false)} title="No" color="#841584" />
+              </View>
+            </View>
+          </Modal>
       </ScrollView>
+    )}
       <Navbar />
       <Modal
         animationType="slide"
