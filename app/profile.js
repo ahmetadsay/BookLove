@@ -94,6 +94,18 @@ const ProfilePage = () => {
       alert("Successfully added!");
     }
   };
+
+  useEffect(() => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
+  }, []);
+
+
   useEffect(() => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
