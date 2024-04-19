@@ -31,7 +31,7 @@
         "android.permission.CAMERA"
       ],
       "package": "com.bookloved.app",
-      "versionCode": 5.0,
+      "versionCode": 6.0,
     },
     "scheme": "BookLoved",
     "web": {
