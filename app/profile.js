@@ -25,12 +25,31 @@ const ProfilePage = () => {
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true); 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [readBooks, setReadBooks] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [readingData, setReadingData] = useState([]);
 
   const auth = getAuth();
   const currentUser = auth.currentUser;
+
+  useEffect(() => {
+    const fetchReadBooks = async () => {
+      if (currentUser) {
+        const db = getFirestore();
+        const userCollection = collection(db, "userCollection");
+        const userBooksQuery = query(
+          userCollection,
+          where("userId", "==", currentUser.uid)
+        );
+        const querySnapshot = await getDocs(userBooksQuery);
+        const books = querySnapshot.docs.map(doc => doc.data());
+        setReadBooks(books);
+      }
+    };
+
+    fetchReadBooks();
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchReadingData = async () => {
@@ -241,6 +260,23 @@ const ProfilePage = () => {
 
         <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
         <View style={styles.section}>
+        <Text style={styles.sectionTitle}>The books I've read</Text>
+      
+        <ScrollView horizontal={true}>
+          {readBooks.map((book, index) => (
+            <View key={index} style={styles.bookContainer}>
+              <Image
+                source={{ uri: book.uri.thumbnail }}
+                style={styles.bookImage}
+              />
+              <Text style={styles.bookTitle}>{book.title}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      
+      </View>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
+        <View style={styles.section}>
         <Text style={styles.sectionTitle}>Reading Progress</Text>
 
         <ContributionGraph
@@ -397,6 +433,20 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: "center",
   },
+  bookImage: {
+    width: 130,
+    height: 180,
+    marginBottom: 8,
+    borderRadius: 8,
+  },
+
+  bookContainer: {
+    width: 150,
+    marginTop: 10,
+    marginRight: 16,
+    marginBottom: 16,
+  },
+    
 });
 
 export default ProfilePage;
