@@ -3,6 +3,8 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { Ionicons } from '@expo/vector-icons';
+import { useState } from "react";
 
 const Book = ({ book }) => {
   const router = useRouter();
@@ -12,7 +14,8 @@ const Book = ({ book }) => {
   const title = book.volumeInfo.title;
 
   const bookImageUrl = book.volumeInfo.imageLinks
-  console.log(bookImageUrl)
+
+  const [isAdded, setIsAdded] = useState(false);
 
   if (!book) {
     return null; // Return null or some loading/empty state if book is undefined
@@ -43,29 +46,37 @@ const Book = ({ book }) => {
         uri: bookImageUrl,
         // Add more book details you want to store
       });
-      alert("Book added to your collection!");
+      setIsAdded(true);
     } catch (error) {
       console.error("Error adding book to collection:", error);
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={() => router.push(`bookDetail/${id}`)}>
-        <Image source={imageSource} style={styles.image} />
-      </TouchableOpacity>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.author} ellipsizeMode="tail">
-        {book.volumeInfo.authors && book.volumeInfo.authors[0]}
-      </Text>
-      <TouchableOpacity
-        onPress={handleAddToCollection}
-        style={styles.addButton}
-      >
-        <Text style={styles.addButtonText}>Add</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    const showAlert = () => {
+      alert("Success!, Book added to your collection!",
+      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      { cancelable: false });
+    }
+    return (
+      <View style={styles.container}>
+        {isAdded && showAlert()}
+        <TouchableOpacity onPress={() => router.push(`bookDetail/${id}`)}>
+          <Image source={imageSource} style={styles.image} />
+          {!isAdded && (
+            <TouchableOpacity
+              onPress={handleAddToCollection}
+              style={styles.addButton}
+            >
+              <Ionicons name="add-circle" size={30} color="white" style={styles.addIcon} />
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.author} ellipsizeMode="tail">
+          {book.volumeInfo.authors && book.volumeInfo.authors[0]}
+        </Text>
+      </View>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -79,6 +90,7 @@ const styles = StyleSheet.create({
     height: 180,
     marginBottom: 8,
     borderRadius: 8,
+    position: 'relative',
   },
   title: {
     fontSize: 18,
@@ -89,15 +101,15 @@ const styles = StyleSheet.create({
     color: "#A3A3A3",
   },
   addButton: {
-    backgroundColor: "#23527C",
+    position: 'absolute',
+    top: 0,
+    left: 0,
     borderRadius: 5,
     padding: 5,
     alignItems: "center",
-    marginTop: 8,
   },
-  addButtonText: {
-    color: "white",
-    fontWeight: "bold",
+  addIcon: {
+    margin: 5,
   },
 });
 
