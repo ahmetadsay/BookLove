@@ -23,15 +23,35 @@ import { ActivityIndicator } from "react-native";
 const ProfilePage = () => {
   const [userGender, setUserGender] = useState("");
   const [userName, setUserName] = useState("");
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [readBooks, setReadBooks] = useState([]);
+  const [toReadBooks, setToReadBooks] = useState([]);
+
 
   const [showModal, setShowModal] = useState(false);
   const [readingData, setReadingData] = useState([]);
 
   const auth = getAuth();
   const currentUser = auth.currentUser;
+
+  useEffect(() => {
+    const fetchToReadBooks = async () => {
+      if (currentUser) {
+        const db = getFirestore();
+        const userCollection = collection(db, "userLikeCollection");
+        const userBooksQuery = query(
+          userCollection,
+          where("userId", "==", currentUser.uid)
+        );
+        const querySnapshot = await getDocs(userBooksQuery);
+        const books = querySnapshot.docs.map((doc) => doc.data());
+        setToReadBooks(books);
+      }
+    };
+
+    fetchToReadBooks();
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchReadBooks = async () => {
@@ -43,7 +63,7 @@ const ProfilePage = () => {
           where("userId", "==", currentUser.uid)
         );
         const querySnapshot = await getDocs(userBooksQuery);
-        const books = querySnapshot.docs.map(doc => doc.data());
+        const books = querySnapshot.docs.map((doc) => doc.data());
         setReadBooks(books);
       }
     };
@@ -123,7 +143,6 @@ const ProfilePage = () => {
       return;
     }
   }, []);
-
 
   useEffect(() => {
     const auth = getAuth();
@@ -208,107 +227,135 @@ const ProfilePage = () => {
 
   return (
     <View style={{ flex: 1 }}>
-        {loading ? ( // Render a loading indicator
-      <ActivityIndicator size="large" color="#0000ff" />
-    ) : (
-      <ScrollView contentContainerStyle={styles.ScrollViewContent}>
-        <View style={styles.container}>
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
+      {loading ? ( // Render a loading indicator
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <ScrollView contentContainerStyle={styles.ScrollViewContent}>
+          <View style={styles.container}>
+            <Text style={{ fontSize: 30, fontWeight: "bold" }}>Profile</Text>
 
-          <TouchableOpacity onPress={handleLogOut}>
-            <Image
-              source={require("../assets/logout.png")}
-              style={{ width: 30, height: 30 }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.container}>
-          {userGender === "Male" ? (
-            <Image
-              source={require("../assets/boy.png")}
-              style={{ width: 100, height: 100, borderRadius: 50 }}
-            />
-          ) : userGender === "Female" ? (
-            <Image
-              source={require("../assets/girl.png")}
-              style={{ width: 100, height: 100, borderRadius: 50 }}
-            />
-          ) : (
-            <Image
-              source={require("../assets/book.png")}
-              style={{ width: 100, height: 100, borderRadius: 50 }}
-            />
-          )}
-          {!userName && <Text style={styles.profileName}> Hi booklover!</Text>}
-          <Text style={styles.profileName}> {userName} </Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Change Theme</Text>
-          <View style={styles.privacySettings}>
-            <Text style={styles.privacyText}>Dark</Text>
-            <Switch
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={user.isPublic ? "#f5dd4b" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={togglePrivacy}
-              value={user.isPublic}
-            />
-            <Text style={styles.privacyText}>Light</Text>
-          </View>
-        </View>
-
-        <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-        <View style={styles.section}>
-        <Text style={styles.sectionTitle}>The books I've read</Text>
-      
-        <ScrollView horizontal={true}>
-          {readBooks.map((book, index) => (
-            <View key={index} style={styles.bookContainer}>
+            <TouchableOpacity onPress={handleLogOut}>
               <Image
-                source={{ uri: book.uri.thumbnail }}
-                style={styles.bookImage}
+                source={require("../assets/logout.png")}
+                style={{ width: 30, height: 30 }}
               />
-              <Text style={styles.bookTitle}>{book.title}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.container}>
+            {userGender === "Male" ? (
+              <Image
+                source={require("../assets/boy.png")}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+            ) : userGender === "Female" ? (
+              <Image
+                source={require("../assets/girl.png")}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+            ) : (
+              <Image
+                source={require("../assets/book.png")}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+            )}
+            {!userName && (
+              <Text style={styles.profileName}> Hi booklover!</Text>
+            )}
+            <Text style={styles.profileName}> {userName} </Text>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Change Theme</Text>
+            <View style={styles.privacySettings}>
+              <Text style={styles.privacyText}>Dark</Text>
+              <Switch
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={user.isPublic ? "#f5dd4b" : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={togglePrivacy}
+                value={user.isPublic}
+              />
+              <Text style={styles.privacyText}>Light</Text>
             </View>
-          ))}
-        </ScrollView>
-      
-      </View>
-      <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-        <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Reading Progress</Text>
+          </View>
 
-        <ContributionGraph
-          values={readingData}
-          endDate={new Date()}
-          numDays={105}
-          width="100%"
-          height={220}
-          chartConfig={{
-            backgroundColor: "#d3d3d3",
-            backgroundGradientFrom: "#fff",
-            backgroundGradientTo: "#fff",
-            decimalPlaces: 2, // optional, defaults to 2dp
+          <View
+            style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
+          />
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>The books I've read</Text>
 
-            color: (opacity = 1) => `rgba(0, 20, 0, ${opacity})`,
-            style: {
-              borderRadius: 4,
-            },
-          }}
+            <ScrollView horizontal={true}>
+              {readBooks.map((book, index) => (
+                <View key={index} style={styles.bookContainer}>
+                  <Image
+                    source={{ uri: book.uri.thumbnail }}
+                    style={styles.bookImage}
+                  />
+                  <Text style={styles.bookTitle}>{book.title}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+          <View
+          style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
         />
-        <TouchableOpacity onPress={handleReadBook}>
-          <Text style={styles.button}>Add Reading Progress</Text>
-        </TouchableOpacity>
-        </View>
-
-        <View style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }} />
-        {userName && (
-          <TouchableOpacity onPress={handleDeleteConfirmation}>
-            <Text style={styles.button}> Click here for delete account </Text>
+          <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Books I will read and like</Text>
+    <ScrollView horizontal={true}>
+      {toReadBooks.map((book, index) => (
+        <View key={index} style={styles.bookContainer}>
+          {/* Modify to include heart icon */}
+          <TouchableOpacity onPress={() => handleLikeBook(book)}>
+            <Image
+              source={{ uri: book.uri.thumbnail }}
+              style={styles.bookImage}
+            />
+      
           </TouchableOpacity>
-        )}
-            <Modal
+          <Text style={styles.bookTitle}>{book.title}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  </View>
+          <View
+            style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
+          />
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Reading Progress</Text>
+
+            <ContributionGraph
+              values={readingData}
+              endDate={new Date()}
+              numDays={105}
+              width="100%"
+              height={220}
+              chartConfig={{
+                backgroundColor: "#d3d3d3",
+                backgroundGradientFrom: "#fff",
+                backgroundGradientTo: "#fff",
+                decimalPlaces: 2, // optional, defaults to 2dp
+
+                color: (opacity = 1) => `rgba(0, 20, 0, ${opacity})`,
+                style: {
+                  borderRadius: 4,
+                },
+              }}
+            />
+            <TouchableOpacity onPress={handleReadBook}>
+              <Text style={styles.button}>Add Reading Progress</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
+          />
+          {userName && (
+            <TouchableOpacity onPress={handleDeleteConfirmation}>
+              <Text style={styles.button}> Click here for delete account </Text>
+            </TouchableOpacity>
+          )}
+          <Modal
             animationType="slide"
             transparent={true}
             visible={showDeleteConfirmation}
@@ -318,14 +365,20 @@ const ProfilePage = () => {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                <Text style={styles.modalText}>
+                  Are you sure you want to delete your account?
+                </Text>
                 <Button onPress={handleDelete} title="Yes" color="#841584" />
-                <Button onPress={() => setShowDeleteConfirmation(false)} title="No" color="#841584" />
+                <Button
+                  onPress={() => setShowDeleteConfirmation(false)}
+                  title="No"
+                  color="#841584"
+                />
               </View>
             </View>
           </Modal>
-      </ScrollView>
-    )}
+        </ScrollView>
+      )}
       <Navbar />
       <Modal
         animationType="slide"
@@ -338,8 +391,16 @@ const ProfilePage = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Did you read a book today?</Text>
-            <Button onPress={handleAddReadingProgress} title="Yes" color="#841584" />
-            <Button onPress={() => setShowModal(false)} title="No" color="#841584" />
+            <Button
+              onPress={handleAddReadingProgress}
+              title="Yes"
+              color="#841584"
+            />
+            <Button
+              onPress={() => setShowModal(false)}
+              title="No"
+              color="#841584"
+            />
           </View>
         </View>
       </Modal>
@@ -446,7 +507,6 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginBottom: 16,
   },
-    
 });
 
 export default ProfilePage;
