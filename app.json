@@ -31,7 +31,7 @@
         "android.permission.CAMERA"
       ],
       "package": "com.bookloved.app",
-      "versionCode": 7,
+      "versionCode": 8,
       "googleServicesFile": "./google-services.json"
     },
     "scheme": "BookLoved",
