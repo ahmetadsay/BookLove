@@ -31,7 +31,8 @@
         "android.permission.CAMERA"
       ],
       "package": "com.bookloved.app",
-      "versionCode": 7.0,
+      "versionCode": 7,
+      "googleServicesFile": "./google-services.json"
     },
     "scheme": "BookLoved",
     "web": {
@@ -44,7 +45,8 @@
         {
           "cameraPermission": "Allow BookLoved to use your camera ?"
         }
-      ]
+      ],
+      "expo-build-properties"
     ],
     "extra": {
       "router": {

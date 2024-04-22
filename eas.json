@@ -6,15 +6,12 @@
     "development": {
       "developmentClient": true,
       "distribution": "store"
-      
     },
     "preview": {
       "distribution": "store",
       "android": {
         "buildType": "apk"
       }
-      
-
     },
     "production": {}
   },

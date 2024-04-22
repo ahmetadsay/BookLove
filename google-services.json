@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "579880523945",
+    "project_id": "booklove-2a0b9",
+    "storage_bucket": "booklove-2a0b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579880523945:android:79e6ff883edb24f6ebb1b8",
+        "android_client_info": {
+          "package_name": "com.bookloved.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579880523945-kaegu8lfnbgtib555833qgsq5gltidnl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bookloved.app",
+            "certificate_hash": "8d620df406f76943b57adc66f5c1afd3e403fd23"
+          }
+        },
+        {
+          "client_id": "579880523945-n1jnflbpb1m5hu2n5m21man9f8gjgd8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC94UzZOsEM68AIeWzk2-5MWofI0AQ1YBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579880523945-n1jnflbpb1m5hu2n5m21man9f8gjgd8e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "579880523945-okbpa1188k53ou8d35u9ag0b8utn4r9g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.anonymous.BookLoved"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
