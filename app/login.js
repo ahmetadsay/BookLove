@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import "../firebase/firebase";
 
 WebBrowser.maybeCompleteAuthSession();
 
