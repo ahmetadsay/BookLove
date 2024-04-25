@@ -39,6 +39,3 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
-
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
