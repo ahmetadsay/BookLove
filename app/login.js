@@ -14,6 +14,9 @@ import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import { initializeApp } from "../firebase/firebase";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -32,6 +35,20 @@ const Login = () => {
     androidClientId:
       "408102652283-bro7s3ah3t1uhsdf6r6h1ln4jkc4ui3i.apps.googleusercontent.com",
   });
+
+  useEffect(() => {
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Other initialization code if needed
+
+    return () => {
+      // Clean up Firebase resources if necessary
+    };
+  }, []);
+
+
 
   useEffect(() => {
     AsyncStorage.getItem("email").then((savedEmail) => {
