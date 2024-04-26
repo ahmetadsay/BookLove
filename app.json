@@ -28,11 +28,12 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
       ],
       "package": "com.bookloved.app",
       "versionCode": 8,
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      
     },
     "scheme": "BookLoved",
     "web": {
