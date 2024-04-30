@@ -75,6 +75,7 @@ const Book = ({ book }) => {
         bookId: id,
         title: title,
         uri: bookImageUrl,
+        
         // Add more book details you want to store
       });
       setIsAdded(true);
@@ -95,47 +96,57 @@ const Book = ({ book }) => {
       {isAdded && showAlert()}
       <TouchableOpacity onPress={() => router.push(`bookDetail/${id}`)}>
         <Image source={imageSource} style={styles.image} />
-        <TouchableOpacity onPress={handleLİkeBook} style={styles.heartButton}>
-          <Ionicons
-            name={"heart"}
-            size={32}
-            color="red"
-          />
-        </TouchableOpacity>
-        {!isAdded && (
-          <TouchableOpacity
-            onPress={handleAddToCollection}
-            style={styles.addButton}
-          >
-            <Ionicons
-              name="add-circle"
-              size={32}
-              color="black"
-              style={styles.addIcon}
-            />
-          </TouchableOpacity>
-        )}
       </TouchableOpacity>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.author} ellipsizeMode="tail">
-        {book.volumeInfo.authors && book.volumeInfo.authors[0]}
-      </Text>
+      <View style={styles.textContainer}>
+  <Text style={styles.title}>{title}</Text>
+  <Text style={styles.author} ellipsizeMode="tail">
+    {book.volumeInfo.authors && book.volumeInfo.authors[0]}
+  </Text>
+</View>
+<View style={styles.rating}>
+  {!isAdded && (
+    <TouchableOpacity
+      onPress={handleAddToCollection}
+      style={styles.addButton}
+    >
+      <Ionicons
+        name="add-circle"
+        size={32}
+        color="gray"
+        style={styles.addIcon}
+      />
+    </TouchableOpacity>
+  )}
+  <TouchableOpacity onPress={handleLİkeBook} style={styles.heartButton}>
+    <Ionicons
+      name={"heart"}
+      size={32}
+      color="red"
+    />
+  </TouchableOpacity>
+</View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 150,
+    width: 160,
     marginRight: 16,
-    marginBottom: 16,
+    backgroundColor: "white",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
+
+  },
+  textContainer: {
+    height: 60, // Adjust this value as needed
+    padding: 8,
   },
   image: {
-    width: 130,
-    height: 180,
-    marginBottom: 8,
+    width: "100%",
+    height: 200,
     borderRadius: 8,
-    position: "relative",
   },
   title: {
     fontSize: 18,
@@ -145,24 +156,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#A3A3A3",
   },
-  addButton: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    borderRadius: 5,
-    padding: 5,
+  rating: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    position: "relative",
+    padding: 8,
+    marginTop: 24,
   },
-  addIcon: {
-    margin: 5,
-  },
-  heartButton: {
-    position: "absolute",
-    top: 0,
-    right: 20,
-    padding: 10,
-    zIndex: 1,
-  },
+
+
 });
 
 export default Book;

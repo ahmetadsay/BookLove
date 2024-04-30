@@ -9,7 +9,6 @@ import {
   Button,
   Modal,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { Image } from "react-native";
 import { getAuth, signOut, deleteUser } from "firebase/auth";
 import { getFirestore, collection, addDoc } from "firebase/firestore";

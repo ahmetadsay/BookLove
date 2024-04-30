@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { fetchBookData } from "../components/getBookIspn";
 import Navbar from "../components/navbar";
+import { Image } from "react-native";
 
 export default function BarCodeScan() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -22,6 +23,7 @@ export default function BarCodeScan() {
     setScanned(true);
     const bookData = await fetchBookData(data);
     setBookData(bookData);
+    console.log(bookData);
   };
 
   if (hasPermission === null) {
@@ -47,9 +49,16 @@ export default function BarCodeScan() {
             />
             {bookData ? (
               <View style={styles.bookDataContainer}>
+                {/* <Image
+                  style={{ width: 100, height: 200 }}
+                  source={{
+                    uri: bookData.items[0].volumeInfo.imageLinks.thumbnail,
+                  }}
+                /> */}
                 <Text style={styles.bookDataTitle}>
                   {bookData.items[0].volumeInfo.title}
                 </Text>
+
                 <Text style={styles.bookDataAuthor}>
                   {bookData.items[0].volumeInfo.authors[0]}
                 </Text>
