@@ -15,7 +15,15 @@ import HTML from "react-native-render-html";
 import Navbar from "../../components/navbar";
 import { db } from "../../firebase/firebase";
 import { getAuth } from "firebase/auth";
-import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 
 const BookDetail = ({}) => {
   const pathname = usePathname();
@@ -80,27 +88,29 @@ const BookDetail = ({}) => {
   const handleAddComment = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
+    console.log(user);
     if (!user) {
       // Show Modal if user is not authenticated
       setShowModal(true);
       return;
     }
-  
+
     // Validate comment text
     if (!newComment.trim()) {
       // Show error message or alert
       alert("Please enter a comment before submitting.");
       return;
     }
-  
     try {
+      // Fetch user's name from Firestor
+
       await addDoc(collection(db, "comments"), {
         userId: user.uid,
         bookId: id,
         text: newComment,
-        name: user.displayName,
+        name: user.displayName, // Use the name from Firestore
       });
-  
+
       // Clear the input field after adding the comment
       setNewComment("");
       // After adding a new comment, refetch comments to update the UI
@@ -109,7 +119,6 @@ const BookDetail = ({}) => {
       console.error("Error adding comment:", error);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -145,7 +154,7 @@ const BookDetail = ({}) => {
                 source={require("../../assets/profileIcon.png")}
                 style={{ width: 50, height: 50, borderRadius: 50 }}
               />
-              <View style={{ gap:10 }}>
+              <View style={{ gap: 10 }}>
                 <Text style={styles.commentOwner}>{comment.name}</Text>
                 <Text>{comment.text}</Text>
               </View>
@@ -294,4 +303,3 @@ const styles = StyleSheet.create({
 });
 
 export default BookDetail;
-

@@ -1,18 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { getDocs, query, where } from "firebase/firestore";
 
 const Book = ({ book }) => {
   const router = useRouter();
 
   const id = book.id;
-
   const title = book.volumeInfo.title;
-
   const bookImageUrl = book.volumeInfo.imageLinks;
 
   const [isAdded, setIsAdded] = useState(false);
@@ -28,7 +31,7 @@ const Book = ({ book }) => {
       ? { uri: book.volumeInfo.imageLinks.thumbnail }
       : require("../assets/thebook.png"); // Fallback image path
 
-  const handleLİkeBook = async () => {
+  const handleLikeBook = async () => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -45,18 +48,42 @@ const Book = ({ book }) => {
         bookId: id,
         title: title,
         uri: bookImageUrl,
+        isLiked: !isLiked, // Toggle the like status
         // Add more book details you want to store
       });
-      setIsLiked(true);
-      alert(
-        "Success!, Book added to your like collection!",
-        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-        { cancelable: false }
-      );
+      setIsLiked(!isLiked); // Toggle the state
+      alert("Success!, Book added to your like collection!");
     } catch (error) {
       console.error("Error adding book to collection:", error);
     }
   };
+  const fetchIsLiked = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+  
+    if (!currentUser) {
+      return;
+    }
+  
+    try {
+      const db = getFirestore();
+      const userLikeCollection = collection(db, "userLikeCollection");
+      const q = query(
+        userLikeCollection,
+        where("bookId", "==", id),
+        where("userId", "==", currentUser.uid)
+      );
+      const bookSnapshot = await getDocs(q);
+  
+      setIsLiked(!bookSnapshot.empty); // Set isLiked to true if any document exists, otherwise false
+    } catch (error) {
+      console.error("Error fetching user likes:", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchIsLiked();
+  }, []);
 
   const handleAddToCollection = async () => {
     const auth = getAuth();
@@ -75,7 +102,7 @@ const Book = ({ book }) => {
         bookId: id,
         title: title,
         uri: bookImageUrl,
-        
+
         // Add more book details you want to store
       });
       setIsAdded(true);
@@ -85,12 +112,9 @@ const Book = ({ book }) => {
   };
 
   const showAlert = () => {
-    alert(
-      "Success!, Book added to your collection!",
-      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-      { cancelable: false }
-    );
+    alert("Success!, Book added to your collection!");
   };
+
   return (
     <View style={styles.container}>
       {isAdded && showAlert()}
@@ -98,33 +122,33 @@ const Book = ({ book }) => {
         <Image source={imageSource} style={styles.image} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-  <Text style={styles.title}>{title}</Text>
-  <Text style={styles.author} ellipsizeMode="tail">
-    {book.volumeInfo.authors && book.volumeInfo.authors[0]}
-  </Text>
-</View>
-<View style={styles.rating}>
-  {!isAdded && (
-    <TouchableOpacity
-      onPress={handleAddToCollection}
-      style={styles.addButton}
-    >
-      <Ionicons
-        name="add-circle"
-        size={32}
-        color="gray"
-        style={styles.addIcon}
-      />
-    </TouchableOpacity>
-  )}
-  <TouchableOpacity onPress={handleLİkeBook} style={styles.heartButton}>
-    <Ionicons
-      name={"heart"}
-      size={32}
-      color="red"
-    />
-  </TouchableOpacity>
-</View>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.author} ellipsizeMode="tail">
+          {book.volumeInfo.authors && book.volumeInfo.authors[0]}
+        </Text>
+      </View>
+      <View style={styles.rating}>
+        {!isAdded && (
+          <TouchableOpacity
+            onPress={handleAddToCollection}
+            style={styles.addButton}
+          >
+            <Ionicons
+              name="add-circle"
+              size={32}
+              color="gray"
+              style={styles.addIcon}
+            />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={handleLikeBook} style={styles.heartButton}>
+          <Ionicons
+            name={isLiked ? "heart" : "heart-outline"}
+            size={32}
+            color={isLiked ? "red" : "black"}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -137,7 +161,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#E5E5E5",
-
   },
   textContainer: {
     height: 60, // Adjust this value as needed
@@ -164,8 +187,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginTop: 24,
   },
-
-
 });
 
 export default Book;
