@@ -41,6 +41,10 @@ const Book = ({ book }) => {
     }
 
     try {
+      if (isLiked) {
+        alert('You have already liked this book!');
+        return;
+      }
       const db = getFirestore();
       const userCollection = collection(db, "userLikeCollection");
       await addDoc(userCollection, {

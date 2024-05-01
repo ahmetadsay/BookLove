@@ -27,7 +27,6 @@ const ProfilePage = () => {
   const [readBooks, setReadBooks] = useState([]);
   const [toReadBooks, setToReadBooks] = useState([]);
 
-
   const [showModal, setShowModal] = useState(false);
   const [readingData, setReadingData] = useState([]);
 
@@ -90,10 +89,6 @@ const ProfilePage = () => {
       fetchReadingData();
     }
   }, [currentUser]);
-
-  const handleDeleteConfirmation = () => {
-    setShowDeleteConfirmation(true);
-  };
 
   const handleReadBook = () => {
     if (!currentUser) {
@@ -223,6 +218,12 @@ const ProfilePage = () => {
       })
       .catch((error) => {});
   };
+  const handleDeleteConfirmation = () => {
+    setShowDeleteConfirmation(true);
+  };
+  const cancelDelete = () => {
+    setShowDeleteConfirmation(false);
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -297,26 +298,25 @@ const ProfilePage = () => {
             </ScrollView>
           </View>
           <View
-          style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
-        />
+            style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
+          />
           <View style={styles.section}>
-    <Text style={styles.sectionTitle}>Books I will read and like</Text>
-    <ScrollView horizontal={true}>
-      {toReadBooks.map((book, index) => (
-        <View key={index} style={styles.bookContainer}>
-          {/* Modify to include heart icon */}
-          <TouchableOpacity onPress={() => handleLikeBook(book)}>
-            <Image
-              source={{ uri: book.uri.thumbnail }}
-              style={styles.bookImage}
-            />
-      
-          </TouchableOpacity>
-          <Text style={styles.bookTitle}>{book.title}</Text>
-        </View>
-      ))}
-    </ScrollView>
-  </View>
+            <Text style={styles.sectionTitle}>Books I will read and like</Text>
+            <ScrollView horizontal={true}>
+              {toReadBooks.map((book, index) => (
+                <View key={index} style={styles.bookContainer}>
+                  {/* Modify to include heart icon */}
+                  <TouchableOpacity onPress={() => handleLikeBook(book)}>
+                    <Image
+                      source={{ uri: book.uri.thumbnail }}
+                      style={styles.bookImage}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.bookTitle}>{book.title}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
           <View
             style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
           />
@@ -351,7 +351,7 @@ const ProfilePage = () => {
           />
           {userName && (
             <TouchableOpacity onPress={handleDeleteConfirmation}>
-              <Text style={styles.button}> Click here for delete account </Text>
+              <Text style={styles.button}>Click here to delete account</Text>
             </TouchableOpacity>
           )}
           <Modal
@@ -368,11 +368,7 @@ const ProfilePage = () => {
                   Are you sure you want to delete your account?
                 </Text>
                 <Button onPress={handleDelete} title="Yes" color="#841584" />
-                <Button
-                  onPress={() => setShowDeleteConfirmation(false)}
-                  title="No"
-                  color="#841584"
-                />
+                <Button onPress={cancelDelete} title="No" color="#841584" />
               </View>
             </View>
           </Modal>
