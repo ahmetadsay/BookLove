@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-} from "firebase/firestore";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -42,7 +38,7 @@ const Book = ({ book }) => {
 
     try {
       if (isLiked) {
-        alert('You have already liked this book!');
+        alert("You have already liked this book!");
         return;
       }
       const db = getFirestore();
@@ -64,11 +60,11 @@ const Book = ({ book }) => {
   const fetchIsLiked = async () => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-  
+
     if (!currentUser) {
       return;
     }
-  
+
     try {
       const db = getFirestore();
       const userLikeCollection = collection(db, "userLikeCollection");
@@ -78,13 +74,13 @@ const Book = ({ book }) => {
         where("userId", "==", currentUser.uid)
       );
       const bookSnapshot = await getDocs(q);
-  
+
       setIsLiked(!bookSnapshot.empty); // Set isLiked to true if any document exists, otherwise false
     } catch (error) {
       console.error("Error fetching user likes:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchIsLiked();
   }, []);
@@ -99,6 +95,10 @@ const Book = ({ book }) => {
     }
 
     try {
+      if (isAdded) {
+        alert("You have already added this book to your collection!");
+        return;
+      }
       const db = getFirestore();
       const userCollection = collection(db, "userCollection");
       await addDoc(userCollection, {
@@ -106,22 +106,48 @@ const Book = ({ book }) => {
         bookId: id,
         title: title,
         uri: bookImageUrl,
+        isAdded: !isAdded, // Toggle the like status
 
         // Add more book details you want to store
       });
-      setIsAdded(true);
+      setIsAdded(!isAdded);
+      alert("Success!, Book added to your like collection!"); // Toggle the state
     } catch (error) {
       console.error("Error adding book to collection:", error);
     }
   };
 
-  const showAlert = () => {
-    alert("Success!, Book added to your collection!");
-  };
+  const fetchAddCollection = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      return;
+    }
+
+    try {
+      const db = getFirestore();
+      const userCollection = collection(db, "userCollection");
+      const q = query(
+        userCollection,
+        where("bookId", "==", id),
+        where("userId", "==", currentUser.uid)
+      );
+      const bookSnapshot = await getDocs(q);
+
+      setIsAdded(!bookSnapshot.empty); // Set isLiked to true if any document exists, otherwise false
+    } catch (error) {
+      console.error("Error fetching user likes:", error);
+    }
+  }
+
+
+  useEffect(() => {
+    fetchAddCollection();
+  }, []);
 
   return (
     <View style={styles.container}>
-      {isAdded && showAlert()}
       <TouchableOpacity onPress={() => router.push(`bookDetail/${id}`)}>
         <Image source={imageSource} style={styles.image} />
       </TouchableOpacity>
@@ -132,19 +158,19 @@ const Book = ({ book }) => {
         </Text>
       </View>
       <View style={styles.rating}>
-        {!isAdded && (
+       
           <TouchableOpacity
             onPress={handleAddToCollection}
             style={styles.addButton}
           >
             <Ionicons
-              name="add-circle"
+              name={isAdded ? "checkbox" : "add-circle"}
               size={32}
-              color="gray"
+              color={isAdded ? "green" : "black"}
               style={styles.addIcon}
             />
           </TouchableOpacity>
-        )}
+     
         <TouchableOpacity onPress={handleLikeBook} style={styles.heartButton}>
           <Ionicons
             name={isLiked ? "heart" : "heart-outline"}
