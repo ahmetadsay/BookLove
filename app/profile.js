@@ -326,18 +326,18 @@ const ProfilePage = () => {
             <ContributionGraph
               values={readingData}
               endDate={new Date()}
-              numDays={105}
+              numDays={90}
               width="100%"
               height={220}
+              
               chartConfig={{
-                backgroundColor: "#d3d3d3",
-                backgroundGradientFrom: "#fff",
-                backgroundGradientTo: "#fff",
-                decimalPlaces: 2, // optional, defaults to 2dp
-
+                backgroundColor: '#1cc910',
+                backgroundGradientFrom: '#eff3ff',
+                backgroundGradientTo: '#efefef',
+                decimalPlaces: 2,
                 color: (opacity = 1) => `rgba(0, 20, 0, ${opacity})`,
                 style: {
-                  borderRadius: 4,
+                  borderRadius: 16,
                 },
               }}
             />
@@ -423,6 +423,7 @@ const styles = StyleSheet.create({
   },
   section: {
     margin: 20,
+    gap: 20,
   },
   sectionTitle: {
     fontSize: 18,
