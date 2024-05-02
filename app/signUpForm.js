@@ -48,14 +48,15 @@ const SignUpForm = () => {
         auth,
         email,
         password,
-        displayName
       );
 
       // Update the user profile in Firebase Authentication
-      await updateProfile(auth.currentUser, {
+      await updateProfile(userCredential.user, {
         displayName: name,
       });
 
+      await userCredential.user.reload();
+      
       // Create a user document in Firestore
       const docRef = await addDoc(collection(db, "users"), {
         uid: userCredential.user.uid,

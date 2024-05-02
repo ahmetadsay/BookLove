@@ -143,7 +143,7 @@ const ProfilePage = () => {
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      currentUser.displayName = userName;
+      setUserName(currentUser.displayName);
 
       const db = getFirestore();
       const usersCollection = collection(db, "users");
@@ -170,27 +170,6 @@ const ProfilePage = () => {
     }
   }, []);
 
-  const [user, setUser] = useState({
-    currentlyReading: [
-      { title: "Book 1", author: "Author 1" },
-      { title: "Book 2", author: "Author 2" },
-    ],
-    toRead: [
-      { title: "Book 3", author: "Author 3" },
-      { title: "Book 4", author: "Author 4" },
-    ],
-    friends: [{ name: "Friend 1" }, { name: "Friend 2" }],
-    booksRead: 5,
-    wordsSaved: 1000,
-    // Add achievements and badges here
-    achievements: [
-      "Bookworm Badge",
-      "Reading Challenge Champion",
-      "Top Reviewer",
-    ],
-    isPublic: true,
-    activityVisibility: "Friends",
-  });
 
   const handleLogOut = () => {
     const auth = getAuth();
@@ -201,13 +180,6 @@ const ProfilePage = () => {
       .catch((error) => {});
   };
 
-  const togglePrivacy = () => {
-    setUser({ ...user, isPublic: !user.isPublic });
-  };
-
-  const handleVisibilityChange = (value) => {
-    setUser({ ...user, activityVisibility: value });
-  };
 
   const handleDelete = () => {
     const auth = getAuth();
@@ -270,10 +242,9 @@ const ProfilePage = () => {
               <Text style={styles.privacyText}>Dark</Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={user.isPublic ? "#f5dd4b" : "#f4f3f4"}
                 ios_backgroundColor="#3e3e3e"
-                onValueChange={togglePrivacy}
-                value={user.isPublic}
+
+   
               />
               <Text style={styles.privacyText}>Light</Text>
             </View>
