@@ -4,11 +4,15 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { fetchBookData } from "../components/getBookIspn";
 import Navbar from "../components/navbar";
 import { Image } from "react-native";
+import { addDoc, collection } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default function BarCodeScan() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [bookData, setBookData] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -24,6 +28,21 @@ export default function BarCodeScan() {
     const bookData = await fetchBookData(data);
     setBookData(bookData);
     console.log(bookData);
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    try {
+      const db = getFirestore();
+      await addDoc(collection(db, "scannedBooks"), {
+        title: bookData.items[0].volumeInfo.title,
+        image: bookData.items[0].volumeInfo.imageLinks.smallThumbnail,
+        userId: currentUser.uid,
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+
+    alert("Automatically added to your to be read and loved  collection!");
   };
 
   if (hasPermission === null) {
@@ -49,12 +68,13 @@ export default function BarCodeScan() {
             />
             {bookData ? (
               <View style={styles.bookDataContainer}>
-                {/* <Image
-                  style={{ width: 100, height: 200 }}
+                <Image
+                  style={{ width: 210, height: 300 }}
                   source={{
-                    uri: bookData.items[0].volumeInfo.imageLinks.thumbnail,
+                    uri: bookData.items[0].volumeInfo.imageLinks.smallThumbnail,
                   }}
-                /> */}
+                />
+
                 <Text style={styles.bookDataTitle}>
                   {bookData.items[0].volumeInfo.title}
                 </Text>
@@ -80,7 +100,6 @@ export default function BarCodeScan() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: "black",
   },
   content: {
@@ -100,6 +119,7 @@ const styles = StyleSheet.create({
     padding: 20,
     margin: 20,
     borderRadius: 5,
+    alignItems: "center",
   },
   bookDataTitle: {
     fontSize: 24,

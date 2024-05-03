@@ -26,6 +26,10 @@ const ProfilePage = () => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [readBooks, setReadBooks] = useState([]);
   const [toReadBooks, setToReadBooks] = useState([]);
+  const [bookData, setBookData] = useState({
+    scannedBooks: [],
+    toReadBooks: [],
+  });
 
   const [showModal, setShowModal] = useState(false);
   const [readingData, setReadingData] = useState([]);
@@ -34,22 +38,41 @@ const ProfilePage = () => {
   const currentUser = auth.currentUser;
 
   useEffect(() => {
-    const fetchToReadBooks = async () => {
-      if (currentUser) {
+    const fetchBooks = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
         const db = getFirestore();
-        const userCollection = collection(db, "userLikeCollection");
-        const userBooksQuery = query(
-          userCollection,
-          where("userId", "==", currentUser.uid)
+
+        // Fetch scanned books
+        const scannedCollection = collection(db, "scannedBooks");
+        const scannedQuery = query(
+          scannedCollection,
+          where("userId", "==", user.uid)
         );
-        const querySnapshot = await getDocs(userBooksQuery);
-        const books = querySnapshot.docs.map((doc) => doc.data());
-        setToReadBooks(books);
+        const scannedSnapshot = await getDocs(scannedQuery);
+        const scannedBooks = scannedSnapshot.docs.map((doc) => doc.data());
+
+        // Fetch books marked for reading
+        const toReadCollection = collection(db, "userLikeCollection");
+        const toReadQuery = query(
+          toReadCollection,
+          where("userId", "==", user.uid)
+        );
+        const toReadSnapshot = await getDocs(toReadQuery);
+        const toReadBooks = toReadSnapshot.docs.map((doc) => doc.data());
+
+        // Update the state with fetched data
+        setBookData({
+          scannedBooks: scannedBooks,
+          toReadBooks: toReadBooks,
+        });
       }
     };
 
-    fetchToReadBooks();
-  }, [currentUser]);
+    fetchBooks();
+  }, []);
 
   useEffect(() => {
     const fetchReadBooks = async () => {
@@ -170,7 +193,6 @@ const ProfilePage = () => {
     }
   }, []);
 
-
   const handleLogOut = () => {
     const auth = getAuth();
     signOut(auth)
@@ -179,7 +201,6 @@ const ProfilePage = () => {
       })
       .catch((error) => {});
   };
-
 
   const handleDelete = () => {
     const auth = getAuth();
@@ -243,8 +264,6 @@ const ProfilePage = () => {
               <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
                 ios_backgroundColor="#3e3e3e"
-
-   
               />
               <Text style={styles.privacyText}>Light</Text>
             </View>
@@ -274,20 +293,25 @@ const ProfilePage = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Books I will read and like</Text>
             <ScrollView horizontal={true}>
-              {toReadBooks.map((book, index) => (
-                <View key={index} style={styles.bookContainer}>
-                  {/* Modify to include heart icon */}
-                  <TouchableOpacity onPress={() => handleLikeBook(book)}>
-                    <Image
-                      source={{ uri: book.uri.thumbnail }}
-                      style={styles.bookImage}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.bookTitle}>{book.title}</Text>
-                </View>
-              ))}
+              {[...bookData.scannedBooks, ...bookData.toReadBooks].map(
+                (book, index) => (
+                  <View key={index} style={styles.bookContainer}>
+                    {/* Modify to include heart icon */}
+                    <TouchableOpacity onPress={() => handleLikeBook(book)}>
+                      <Image
+                        source={{
+                          uri: book.uri ? book.uri.smallThumbnail : book.image,
+                        }}
+                        style={styles.bookImage}
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.bookTitle}>{book.title}</Text>
+                  </View>
+                )
+              )}
             </ScrollView>
           </View>
+
           <View
             style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
           />
@@ -300,11 +324,10 @@ const ProfilePage = () => {
               numDays={90}
               width="100%"
               height={220}
-              
               chartConfig={{
-                backgroundColor: '#1cc910',
-                backgroundGradientFrom: '#eff3ff',
-                backgroundGradientTo: '#efefef',
+                backgroundColor: "#1cc910",
+                backgroundGradientFrom: "#eff3ff",
+                backgroundGradientTo: "#efefef",
                 decimalPlaces: 2,
                 color: (opacity = 1) => `rgba(0, 20, 0, ${opacity})`,
                 style: {
