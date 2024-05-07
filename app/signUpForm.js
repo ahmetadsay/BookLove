@@ -12,9 +12,13 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { collection, addDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  fetchSignInMethodsForEmail,
+} from "firebase/auth";
 import { Picker, PickerIOS } from "@react-native-picker/picker";
-import { auth, db } from "../firebase/firebase";
+import { auth, db, getUserByEmail, getAuth } from "../firebase/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import SelectDropdown from "react-native-select-dropdown";
@@ -34,6 +38,7 @@ const signUpSchema = Yup.object().shape({
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const goBack = () => {
     router.back();
@@ -41,10 +46,14 @@ const SignUpForm = () => {
 
   const handleSubmit = async (values) => {
     const displayName = values.name;
-
     try {
       const { email, password, gender, name } = values;
 
+      const existingUserMethods = await fetchSignInMethodsForEmail(auth, email);
+      if (existingUserMethods.length > 0) {
+        setEmailError("Email already in use");
+        return;
+      }
       // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -70,6 +79,12 @@ const SignUpForm = () => {
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
+      if (errorCode === "auth/email-already-in-use") {
+        setEmailError("Email already in use");
+      } else {
+        console.error("Error adding document: ", error);
+      }
+      return;
     }
 
     router.push("/home");
@@ -127,6 +142,7 @@ const SignUpForm = () => {
             {errors.email && touched.email && (
               <Text style={styles.error}>{errors.email}</Text>
             )}
+            {emailError && <Text style={styles.error}>{emailError}</Text>}
 
             <View style={styles.inputContainer}>
               <TextInput
@@ -174,7 +190,6 @@ const SignUpForm = () => {
 
             {Platform.OS === "ios" && (
               <SelectDropdown
-        
                 data={["Male", "Female"]}
                 onSelect={(selectedItem, index) =>
                   handleChange("gender")(selectedItem)
@@ -327,20 +342,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   dropdownButtonStyle: {
-    width: '80%',
+    width: "80%",
     height: 50,
-    backgroundColor: '#E9ECEF',
+    backgroundColor: "#E9ECEF",
     borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 12,
   },
   dropdownButtonTxtStyle: {
     flex: 1,
     fontSize: 18,
-    fontWeight: '500',
-    color: '#151E26',
+    fontWeight: "500",
+    color: "#151E26",
   },
   dropdownButtonArrowStyle: {
     fontSize: 28,
@@ -350,22 +365,22 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   dropdownMenuStyle: {
-    backgroundColor: '#E9ECEF',
+    backgroundColor: "#E9ECEF",
     borderRadius: 8,
   },
   dropdownItemStyle: {
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 8,
   },
   dropdownItemTxtStyle: {
     flex: 1,
     fontSize: 18,
-    fontWeight: '500',
-    color: '#151E26',
+    fontWeight: "500",
+    color: "#151E26",
   },
   dropdownItemIconStyle: {
     fontSize: 28,
