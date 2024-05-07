@@ -5,6 +5,7 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -12,10 +13,11 @@ import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { collection, addDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { Picker } from "@react-native-picker/picker";
+import { Picker, PickerIOS } from "@react-native-picker/picker";
 import { auth, db } from "../firebase/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import SelectDropdown from "react-native-select-dropdown";
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -47,7 +49,7 @@ const SignUpForm = () => {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
 
       // Update the user profile in Firebase Authentication
@@ -56,7 +58,7 @@ const SignUpForm = () => {
       });
 
       await userCredential.user.reload();
-      
+
       // Create a user document in Firestore
       const docRef = await addDoc(collection(db, "users"), {
         uid: userCredential.user.uid,
@@ -169,23 +171,61 @@ const SignUpForm = () => {
             {errors.confirmPassword && touched.confirmPassword && (
               <Text style={styles.error}>{errors.confirmPassword}</Text>
             )}
-            <View style={styles.pickerContainer}>
-              <Picker
-                value={values.gender}
-                style={styles.input2}
-                selectedValue={values.gender}
-                onValueChange={(itemValue, itemIndex) =>
-                  handleChange("gender")(itemValue)
+
+            {Platform.OS === "ios" && (
+              <SelectDropdown
+        
+                data={["Male", "Female"]}
+                onSelect={(selectedItem, index) =>
+                  handleChange("gender")(selectedItem)
                 }
-              >
-                <Picker.Item label="Select Gender" value="" />
-                <Picker.Item label="Male" value="Male" />
-                <Picker.Item label="Female" value="Female" />
-              </Picker>
-              {errors.gender && touched.gender && (
-                <Text style={styles.error}>{errors.gender}</Text>
-              )}
-            </View>
+                renderButton={(selectedItem, isOpened) => (
+                  <View style={styles.dropdownButtonStyle}>
+                    <Text style={styles.dropdownButtonTxtStyle}>
+                      {(selectedItem && selectedItem) || "Select Gender"}
+                    </Text>
+                    <MaterialIcons
+                      name={
+                        isOpened ? "keyboard-arrow-up" : "keyboard-arrow-down"
+                      }
+                      style={styles.dropdownButtonIconStyle}
+                    />
+                  </View>
+                )}
+                renderItem={(item, index, isSelected) => (
+                  <View
+                    style={{
+                      ...styles.dropdownItemStyle,
+                      ...(isSelected && { backgroundColor: "#D2D9DF" }),
+                    }}
+                  >
+                    <Text style={styles.dropdownItemTxtStyle}>{item}</Text>
+                  </View>
+                )}
+                showsVerticalScrollIndicator={false}
+                dropdownStyle={styles.dropdownMenuStyle}
+              />
+            )}
+
+            {Platform.OS === "android" && (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  value={values.gender}
+                  style={styles.input2}
+                  selectedValue={values.gender}
+                  onValueChange={(itemValue, itemIndex) =>
+                    handleChange("gender")(itemValue)
+                  }
+                >
+                  <Picker.Item label="Select Gender" value="" />
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Female" value="Female" />
+                </Picker>
+                {errors.gender && touched.gender && (
+                  <Text style={styles.error}>{errors.gender}</Text>
+                )}
+              </View>
+            )}
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Sign Up</Text>
@@ -285,6 +325,51 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: 16,
+  },
+  dropdownButtonStyle: {
+    width: '80%',
+    height: 50,
+    backgroundColor: '#E9ECEF',
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+  dropdownButtonTxtStyle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#151E26',
+  },
+  dropdownButtonArrowStyle: {
+    fontSize: 28,
+  },
+  dropdownButtonIconStyle: {
+    fontSize: 28,
+    marginRight: 8,
+  },
+  dropdownMenuStyle: {
+    backgroundColor: '#E9ECEF',
+    borderRadius: 8,
+  },
+  dropdownItemStyle: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  dropdownItemTxtStyle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#151E26',
+  },
+  dropdownItemIconStyle: {
+    fontSize: 28,
+    marginRight: 8,
   },
 });
 
