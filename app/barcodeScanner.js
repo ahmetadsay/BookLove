@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import { fetchBookData } from "../components/getBookIspn";
 import Navbar from "../components/navbar";
 import { Image } from "react-native";
 import { addDoc, collection } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { CameraView, Camera } from "expo-camera";
 
 export default function BarCodeScan() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -15,12 +15,12 @@ export default function BarCodeScan() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
+    const getCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     };
 
-    getBarCodeScannerPermissions();
+    getCameraPermissions();
   }, []);
 
   const handleBarCodeScanned = async ({ type, data }) => {
@@ -46,9 +46,11 @@ export default function BarCodeScan() {
   };
 
   if (hasPermission === null) {
+    console.log("Request");
     return <Text>Requesting for camera permission</Text>;
   }
   if (hasPermission === false) {
+    console.log("no access");
     return <Text>No access to camera</Text>;
   }
 
@@ -56,10 +58,14 @@ export default function BarCodeScan() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.text}>Scan your book's barcode</Text>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        <CameraView
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barCodeTypes: ["ean13"],
+          }}
           style={StyleSheet.absoluteFillObject}
         />
+        {!handleBarCodeScanned && alert("damn")}
         {scanned && (
           <>
             <Button

@@ -29,6 +29,7 @@
       },
       "permissions": [
         "android.permission.CAMERA",
+        
       ],
       "package": "com.bookloved.app",
       "versionCode": 8,
@@ -42,7 +43,7 @@
     "plugins": [
       "expo-router",
       [
-        "expo-barcode-scanner",
+        "expo-camera",
         {
           "cameraPermission": "Allow BookLoved to use your camera ?"
         }

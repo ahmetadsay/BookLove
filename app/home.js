@@ -33,7 +33,7 @@ const Home = () => {
     "Mystery",
     "Horror",
     "Romance",
-    "Comics",
+    "Fiction",
   ];
 
   const trendingBoksByCategory = {};

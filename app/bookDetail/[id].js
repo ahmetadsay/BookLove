@@ -95,6 +95,11 @@ const BookDetail = ({}) => {
       return;
     }
 
+    if (newComment.trim().length > 300) {
+      alert("Comment should be less than 300 characters");
+      return;
+    }
+
     // Validate comment text
     if (!newComment.trim()) {
       // Show error message or alert
