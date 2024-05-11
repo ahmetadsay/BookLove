@@ -7,7 +7,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { CameraView, Camera } from "expo-camera";
-
+import { bookImage } from "../assets/book.png";
 export default function BarCodeScan() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -27,15 +27,18 @@ export default function BarCodeScan() {
     setScanned(true);
     const bookData = await fetchBookData(data);
     setBookData(bookData);
-    console.log(bookData);
+    console.log(bookData.items[0]);
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
     try {
       const db = getFirestore();
+      const image =
+        bookData.items[0].volumeInfo.imageLinks?.smallThumbnail ||
+       "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781787550360/classic-book-cover-foiled-journal-9781787550360_xlg.jpg"
       await addDoc(collection(db, "scannedBooks"), {
         title: bookData.items[0].volumeInfo.title,
-        image: bookData.items[0].volumeInfo.imageLinks.smallThumbnail,
+        image: image,
         userId: currentUser.uid,
       });
     } catch (error) {
@@ -65,7 +68,6 @@ export default function BarCodeScan() {
           }}
           style={StyleSheet.absoluteFillObject}
         />
-        {!handleBarCodeScanned && alert("damn")}
         {scanned && (
           <>
             <Button
@@ -74,15 +76,20 @@ export default function BarCodeScan() {
             />
             {bookData ? (
               <View style={styles.bookDataContainer}>
-                <Image
-                  style={{ width: 210, height: 300 }}
-                  source={{
-                    uri: bookData.items[0].volumeInfo.imageLinks.smallThumbnail,
-                  }}
-                />
-
+                {bookData.items[0].volumeInfo.imageLinks &&
+                bookData.items[0].volumeInfo.imageLinks.smallThumbnail ? (
+                  <Image
+                    style={{ width: 210, height: 300 }}
+                    source={{
+                      uri: bookData.items[0].volumeInfo.imageLinks
+                        .smallThumbnail,
+                    }}
+                  />
+                ) : (
+                  <Text>No image available</Text>
+                )}
                 <Text style={styles.bookDataTitle}>
-                  {bookData.items[0].volumeInfo.title}
+                  {bookData.items[0].volumeInfo.title || "No title"}
                 </Text>
 
                 <Text style={styles.bookDataAuthor}>
