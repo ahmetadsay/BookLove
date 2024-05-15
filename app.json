@@ -36,7 +36,6 @@
       "googleServicesFile": "./google-services.json",
       
     },
-    "scheme": "BookLoved",
     "web": {
       "favicon": "./assets/favicon.png"
     },
