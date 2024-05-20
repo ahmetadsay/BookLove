@@ -20,7 +20,8 @@
         "NSCameraUsageDescription": "Allow BookLoved to use your camera ?",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.bookloved.app"
+      "bundleIdentifier": "com.bookloved.app",
+      "googleServicesFile": "./GoogleService-Info.plist",
     },
     "android": {
       "adaptiveIcon": {
@@ -40,6 +41,9 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
+    
+
       "expo-router",
       [
         "expo-camera",
