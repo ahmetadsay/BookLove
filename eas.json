@@ -16,6 +16,12 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "mashuevo@hotmail.com",
+        "ascAppId": "6502616770",
+        "appleTeamId": "VNR8UGLPPX"
+      }
+    }
   }
 }
