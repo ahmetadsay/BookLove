@@ -15,17 +15,28 @@ import Navbar from "../components/navbar";
 const FreeBooks = () => {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [search]);
 
   useEffect(() => {
     fetch(`https://gutendex.com/books/?search=${search}`)
       .then((response) => response.json())
       .then((data) => {
-        setBooks(data.results);
+        setBooks(data.results.slice(0, 10)); // Only take the first 10 results
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [search]);
+  }, [debouncedSearch]);
 
   const renderItem = ({ item }) => {
     return (

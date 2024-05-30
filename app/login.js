@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-
 } from "react-native";
 import { router } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -15,8 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import "../firebase/firebase";
-
-WebBrowser.maybeCompleteAuthSession();
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,7 +32,7 @@ const Login = () => {
       "408102652283-bro7s3ah3t1uhsdf6r6h1ln4jkc4ui3i.apps.googleusercontent.com",
   });
 
-
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     AsyncStorage.getItem("email").then((savedEmail) => {
@@ -55,7 +53,7 @@ const Login = () => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-      
+
         router.push("/home");
 
         if (rememberMe) {
@@ -100,7 +98,16 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#FDF3E6",
+        marginBottom: -insets.bottom,
+        marginTop: -insets.top,
+      }}
+    >
       <Image source={require("../assets/home.png")} style={styles.image} />
       <Text style={styles.title}>
         {applyRandomColor("Welcome to BookLove")}
@@ -148,7 +155,6 @@ const Login = () => {
         </View>
 
         {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
-  
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
@@ -156,7 +162,6 @@ const Login = () => {
         <TouchableOpacity style={styles.button} onPress={handleSignup}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
-
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <View style={{ flex: 1, height: 1, backgroundColor: "#000" }} />
@@ -174,12 +179,6 @@ const Login = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FDF3E6",
-  },
   image: {
     width: 250,
     height: 250,
