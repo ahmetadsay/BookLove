@@ -1,8 +1,9 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const index = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,9 +35,9 @@ const index = () => {
   ];
 
   useEffect(() => {
-    AsyncStorage.getItem('alreadyLaunched').then(value => {
+    AsyncStorage.getItem("alreadyLaunched").then((value) => {
       if (value == null) {
-        AsyncStorage.setItem('alreadyLaunched', 'true');
+        AsyncStorage.setItem("alreadyLaunched", "true");
         setFirstLaunch(true);
       } else {
         setFirstLaunch(false);
@@ -44,13 +45,11 @@ const index = () => {
     });
   }, []);
 
-
-useEffect(() => {
-  if (firstLaunch === false) {
-    router.push("/login");
-  }
-}, [firstLaunch]);
-
+  useEffect(() => {
+    if (firstLaunch === false) {
+      router.push("/login");
+    }
+  }, [firstLaunch]);
 
   const handleNext = () => {
     if (currentIndex === slides.length - 1) {
@@ -61,8 +60,21 @@ useEffect(() => {
     }
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#FDF3E6",
+        marginBottom: -insets.bottom,
+        marginTop: -insets.top,
+        padding: 20,
+
+      }}
+    >
       <Image source={slides[currentIndex].image} style={styles.image} />
       <Text style={styles.title}>{slides[currentIndex].title}</Text>
       <Text style={styles.description}>{slides[currentIndex].description}</Text>
@@ -73,7 +85,6 @@ useEffect(() => {
           ) : (
             <MaterialIcons name="forward" size={72} color="#23527C" />
           )}
-         
         </Text>
       </TouchableOpacity>
     </View>
@@ -81,12 +92,6 @@ useEffect(() => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FDF3E6",
-  },
   image: {
     width: 400,
     height: 400,

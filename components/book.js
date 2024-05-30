@@ -25,7 +25,7 @@ const Book = ({ book }) => {
   const imageSource =
     book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail
       ? { uri: book.volumeInfo.imageLinks.thumbnail }
-      : require("../assets/thebook.png"); // Fallback image path
+      : require("../assets/nacover.png"); // Fallback image path
 
   const handleLikeBook = async () => {
     const auth = getAuth();

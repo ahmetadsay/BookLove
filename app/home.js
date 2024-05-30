@@ -38,22 +38,24 @@ const Home = () => {
 
   const trendingBoksByCategory = {};
 
-  let timer;
-
   useEffect(() => {
-    if (timer) {
-      clearTimeout(timer);
-    }
-    timer = setTimeout(async () => {
-      // Fetch books based on the searchQuery and selectedCategory
+    const fetchBooks = async () => {
+      if (searchQuery.trim() === "") {
+        setBooks([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
       const booksData = await fetchBooksFromGoogleAPI(
         searchQuery,
         selectedCategory
       );
       setBooks(booksData);
-      // Update the loading state when data is loaded
       setLoading(false);
-    }, 1500);
+    };
+
+    const timer = setTimeout(fetchBooks, 1500);
+    return () => clearTimeout(timer);
   }, [searchQuery, selectedCategory]);
 
   useEffect(() => {
@@ -94,6 +96,7 @@ const Home = () => {
       </View>
 
       {searchView(setSearchQuery, searchQuery)}
+
       <ScrollView style={styles.container}>
         <View style={styles.content}>
           {books ? (
@@ -106,6 +109,7 @@ const Home = () => {
               ))}
             </ScrollView>
           ) : null}
+
 
           {/* Render the books according to category */}
           {categories.map((category) => (
@@ -147,6 +151,7 @@ const styles = StyleSheet.create({
   searchView: {
     paddingHorizontal: 40,
   },
+
   booksScrollView: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -159,13 +164,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    marginTop: 10,
+
     fontSize: 16,
   },
   content: {
     flex: 1,
     backgroundColor: "white",
     padding: 16,
+    gapBottom: 16,
   },
   welcome: {
     fontSize: 24,
@@ -206,8 +212,7 @@ function searchView(setSearchQuery, searchQuery) {
       style={{
         flexDirection: "row",
         alignItems: "center",
-
-        marginBottom: 16,
+        paddingHorizontal: 16,
       }}
     >
       <Ionicons
