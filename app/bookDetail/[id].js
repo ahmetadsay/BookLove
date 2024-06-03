@@ -175,7 +175,9 @@ const BookDetail = ({}) => {
           onChangeText={(text) => setNewComment(text)}
           style={styles.commentInput}
         />
-        <Button title="Add Comment" onPress={handleAddComment} />
+        <TouchableOpacity style={styles.button} onPress={handleAddComment}>
+          <Text style={styles.buttonText}>Add a comment</Text>
+        </TouchableOpacity>
 
         {/* Modal for authentication */}
         <Modal
@@ -211,6 +213,19 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
+  },
+  button: {
+    backgroundColor: "#23527C",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    alignItems: "center",
+    padding: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
   },
   content: {
     alignItems: "center",
@@ -252,6 +267,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   commentInput: {
+    marginTop: 20,
     marginBottom: 10,
     borderRadius: 5,
     padding: 10,

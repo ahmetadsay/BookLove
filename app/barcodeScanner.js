@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, Modal, TouchableOpacity } from "react-native";
 import { fetchBookData } from "../components/getBookIspn";
 import Navbar from "../components/navbar";
 import { Image } from "react-native";
@@ -8,11 +8,15 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { CameraView, Camera } from "expo-camera";
 import { bookImage } from "../assets/book.png";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function BarCodeScan() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [bookData, setBookData] = useState(null);
   const [user, setUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -20,22 +24,37 @@ export default function BarCodeScan() {
       setHasPermission(status === "granted");
     };
 
+    const checkWelcomeMessage = async () => {
+      const hasSeenWelcome = await AsyncStorage.getItem('hasSeenWelcome');
+      if (hasSeenWelcome === null) {
+        setShowWelcomeMessage(true);
+      }
+    };
+
     getCameraPermissions();
+    checkWelcomeMessage();
   }, []);
 
   const handleBarCodeScanned = async ({ type, data }) => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      setModalVisible(true);
+      setScanned(false);
+      return;
+    }
+
     setScanned(true);
     const bookData = await fetchBookData(data);
     setBookData(bookData);
     console.log(bookData.items[0]);
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
 
     try {
       const db = getFirestore();
       const image =
         bookData.items[0].volumeInfo.imageLinks?.smallThumbnail ||
-       "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781787550360/classic-book-cover-foiled-journal-9781787550360_xlg.jpg"
+        "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781787550360/classic-book-cover-foiled-journal-9781787550360_xlg.jpg";
       await addDoc(collection(db, "scannedBooks"), {
         title: bookData.items[0].volumeInfo.title,
         image: image,
@@ -45,15 +64,18 @@ export default function BarCodeScan() {
       console.error("Error adding document: ", error);
     }
 
-    alert("Automatically added to your to be read and loved  collection!");
+    alert("Automatically added to your to be read and loved collection!");
+  };
+
+  const handleWelcomeMessageClose = async () => {
+    setShowWelcomeMessage(false);
+    await AsyncStorage.setItem('hasSeenWelcome', 'true');
   };
 
   if (hasPermission === null) {
-    console.log("Request");
     return <Text>Requesting for camera permission</Text>;
   }
   if (hasPermission === false) {
-    console.log("no access");
     return <Text>No access to camera</Text>;
   }
 
@@ -106,6 +128,46 @@ export default function BarCodeScan() {
         )}
       </View>
       <Navbar />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              You should sign-up to add books to your collection
+            </Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.textStyle}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showWelcomeMessage}
+        onRequestClose={() => setShowWelcomeMessage(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              You can add books to your collection by scanning the barcode.
+            </Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleWelcomeMessageClose}
+            >
+              <Text style={styles.textStyle}>Okay</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -150,5 +212,41 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  closeButton: {
+    backgroundColor: "#2196F3",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
