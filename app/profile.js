@@ -257,18 +257,6 @@ const ProfilePage = () => {
             <Text style={styles.profileName}> {userName} </Text>
           </View>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Change Theme</Text>
-            <View style={styles.privacySettings}>
-              <Text style={styles.privacyText}>Dark</Text>
-              <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                ios_backgroundColor="#3e3e3e"
-              />
-              <Text style={styles.privacyText}>Light</Text>
-            </View>
-          </View>
-
           <View
             style={{ borderBottomWidth: 1, borderBottomColor: "#d3d3d3" }}
           />
