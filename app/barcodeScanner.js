@@ -7,7 +7,6 @@ import { addDoc, collection } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { CameraView, Camera } from "expo-camera";
-import { bookImage } from "../assets/book.png";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function BarCodeScan() {
@@ -46,25 +45,30 @@ export default function BarCodeScan() {
     }
 
     setScanned(true);
-    const bookData = await fetchBookData(data);
-    setBookData(bookData);
-    console.log(bookData.items[0]);
-
     try {
+      const bookData = await fetchBookData(data);
+      if (!bookData || !bookData.items || !bookData.items[0]) {
+        throw new Error("Invalid book data");
+      }
+      setBookData(bookData);
+      console.log(bookData.items[0]);
+
       const db = getFirestore();
-      const image =
-        bookData.items[0].volumeInfo.imageLinks?.smallThumbnail ||
+      const image = bookData.items[0].volumeInfo.imageLinks?.smallThumbnail || 
         "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781787550360/classic-book-cover-foiled-journal-9781787550360_xlg.jpg";
+      
       await addDoc(collection(db, "scannedBooks"), {
         title: bookData.items[0].volumeInfo.title,
         image: image,
         userId: currentUser.uid,
       });
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
 
-    alert("Automatically added to your to be read and loved collection!");
+      alert("Automatically added to your to be read and loved collection!");
+    } catch (error) {
+      console.error("Error fetching book data: ", error);
+      setBookData(null); // Clear book data on error
+      alert("Failed to fetch book data. Please try again.");
+    }
   };
 
   const handleWelcomeMessageClose = async () => {
@@ -115,10 +119,10 @@ export default function BarCodeScan() {
                 </Text>
 
                 <Text style={styles.bookDataAuthor}>
-                  {bookData.items[0].volumeInfo.authors[0]}
+                  {bookData.items[0].volumeInfo.authors ? bookData.items[0].volumeInfo.authors[0] : "No author"}
                 </Text>
                 <Text style={styles.bookDataDescription}>
-                  {bookData.items[0].volumeInfo.description}
+                  {bookData.items[0].volumeInfo.description || "No description"}
                 </Text>
               </View>
             ) : (
