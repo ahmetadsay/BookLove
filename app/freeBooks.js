@@ -11,11 +11,13 @@ import { StyleSheet } from "react-native";
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the search icon
 import { router } from "expo-router";
 import Navbar from "../components/navbar";
+import SkeletonLoader from  "./SkeletonLoader"; // Import the skeleton loader
 
 const FreeBooks = () => {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -28,13 +30,16 @@ const FreeBooks = () => {
   }, [search]);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`https://gutendex.com/books/?search=${search}`)
       .then((response) => response.json())
       .then((data) => {
         setBooks(data.results.slice(0, 10)); // Only take the first 10 results
+        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
+        setLoading(false);
       });
   }, [debouncedSearch]);
 
@@ -72,11 +77,19 @@ const FreeBooks = () => {
             value={search}
           />
         </View>
-        <FlatList
-          data={books}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-        />
+        {loading ? (
+          <FlatList
+            data={[...Array(10).keys()]} // Render 10 skeleton loaders
+            keyExtractor={(item) => item.toString()}
+            renderItem={() => <SkeletonLoader />}
+          />
+        ) : (
+          <FlatList
+            data={books}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+          />
+        )}
       </View>
       <Navbar style={styles.navbar} />
     </View>
@@ -98,13 +111,10 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 20,
     marginVertical: 10,
-
-
   },
   coverImage: {
     width: 100,
     borderRadius: 10,
-
   },
   contentContainer: {
     flex: 1,
