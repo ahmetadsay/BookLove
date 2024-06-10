@@ -16,7 +16,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "2.0",
+      "buildNumber": "3",
       "supportsTablet": true,
       "icon": "./assets/bookLoveIcon.png",
       "infoPlist": {
