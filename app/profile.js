@@ -252,7 +252,7 @@ const ProfilePage = () => {
               />
             )}
             {!userName && (
-              <Text style={styles.profileName}> Hi booklover!</Text>
+              <Text style={styles.profileName}> Hi there!</Text>
             )}
             <Text style={styles.profileName}> {userName} </Text>
           </View>

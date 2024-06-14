@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text, Button, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text, Button, ScrollView, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Navbar from '../../components/navbar';
-import { usePathname } from 'expo-router'
+import { usePathname } from 'expo-router';
 
-const PAGE_SIZE = 1000; // Number of characters per page
 const SCROLL_POSITION_KEY = 'scrollPosition_';
 
 const BookReader = () => {
@@ -14,6 +13,8 @@ const BookReader = () => {
   const [content, setContent] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -21,10 +22,17 @@ const BookReader = () => {
         const response = await fetch(`https://www.gutenberg.org/ebooks/${id}.txt.utf-8`);
         const text = await response.text();
         setContent(text);
-        setTotalPages(Math.ceil(text.length / PAGE_SIZE));
+
+        const { height, width } = Dimensions.get('window');
+        const charsPerLine = Math.floor(width / 10); // Adjust 10 to fit your font size and padding
+        const linesPerPage = Math.floor(height / 20); // Adjust 20 to fit your line height
+        const computedPageSize = charsPerLine * linesPerPage;
+        setPageSize(computedPageSize);
+        setTotalPages(Math.ceil(text.length / computedPageSize));
+
         const savedPage = await AsyncStorage.getItem(SCROLL_POSITION_KEY + id);
         if (savedPage !== null) {
-          setCurrentPage(Math.ceil(savedPage));
+          setCurrentPage(parseInt(savedPage, 10));
         }
         setLoading(false);
       } catch (error) {
@@ -39,6 +47,9 @@ const BookReader = () => {
   const handlePageChange = async (page) => {
     if (page >= 0 && page < totalPages) {
       setCurrentPage(page);
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 0, animated: false });
+      }
       try {
         await AsyncStorage.setItem(SCROLL_POSITION_KEY + id, page.toString());
       } catch (error) {
@@ -48,10 +59,11 @@ const BookReader = () => {
   };
 
   const getPageContent = () => {
-
-    const start = currentPage * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    return content.substring(start, end);
+    const start = currentPage * pageSize;
+    const end = start + pageSize;
+    const pageText = content.substring(start, end);
+    const lastSpaceIndex = pageText.lastIndexOf(' ');
+    return content.substring(start, start + lastSpaceIndex);
   };
 
   return (
@@ -63,7 +75,7 @@ const BookReader = () => {
         </View>
       ) : (
         <View style={styles.readerContainer}>
-          <ScrollView contentContainerStyle={styles.pageContentContainer}>
+          <ScrollView ref={scrollViewRef} contentContainerStyle={styles.pageContentContainer}>
             <Text style={styles.pageContent}>{getPageContent()}</Text>
           </ScrollView>
           <View style={styles.pagination}>

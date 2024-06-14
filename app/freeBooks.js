@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { StyleSheet } from "react-native";
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the search icon
+import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for the search icon
 import { router } from "expo-router";
 import Navbar from "../components/navbar";
-import SkeletonLoader from  "./SkeletonLoader"; // Import the skeleton loader
+import SkeletonLoader from "./SkeletonLoader"; // Import the skeleton loader
 
 const FreeBooks = () => {
   const [books, setBooks] = useState([]);
@@ -51,15 +51,29 @@ const FreeBooks = () => {
           style={styles.coverImage}
         />
         <View style={styles.contentContainer}>
-          <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail' >{item.title}</Text>
-          <Text numberOfLines={3} ellipsizeMode='tail'>{item.subjects.join(", ")}</Text>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {item.title}
+          </Text>
+          <Text numberOfLines={3} ellipsizeMode="tail">
+            {item.subjects.join(", ")}
+          </Text>
           <Text style={styles.rating}>Rating: {item.download_count}</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push(`readBook/${item.id}`)}
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <Text style={styles.buttonText}>Click for reading</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => router.push(`readBook/${item.id}`)}
+            >
+              <Text style={styles.buttonText}>Read</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+            style={styles.button}
+            onPress={() => router.push(`scrollRead/${item.id}`)}
+            >
+              <Text style={styles.buttonText}>Scroll Read</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -69,7 +83,12 @@ const FreeBooks = () => {
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={24} color="black" style={styles.searchIcon} />
+          <Ionicons
+            name="search"
+            size={24}
+            color="black"
+            style={styles.searchIcon}
+          />
           <TextInput
             style={styles.searchInput}
             placeholder="Search"

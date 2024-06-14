@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -139,8 +146,7 @@ const Book = ({ book }) => {
     } catch (error) {
       console.error("Error fetching user likes:", error);
     }
-  }
-
+  };
 
   useEffect(() => {
     fetchAddCollection();
@@ -152,25 +158,24 @@ const Book = ({ book }) => {
         <Image source={imageSource} style={styles.image} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.author} ellipsizeMode="tail">
+        <Text numberOfLines={2} style={styles.title}>{title}</Text>
+        <Text numberOfLines={2}  style={styles.author} ellipsizeMode="tail">
           {book.volumeInfo.authors && book.volumeInfo.authors[0]}
         </Text>
       </View>
       <View style={styles.rating}>
-       
-          <TouchableOpacity
-            onPress={handleAddToCollection}
-            style={styles.addButton}
-          >
-            <Ionicons
-              name={isAdded ? "checkbox" : "add-circle"}
-              size={32}
-              color={isAdded ? "green" : "black"}
-              style={styles.addIcon}
-            />
-          </TouchableOpacity>
-     
+        <TouchableOpacity
+          onPress={handleAddToCollection}
+          style={styles.addButton}
+        >
+          <Ionicons
+            name={isAdded ? "checkbox" : "add-circle"}
+            size={32}
+            color={isAdded ? "#3F9AA4" : "black"}
+            style={styles.addIcon}
+          />
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={handleLikeBook} style={styles.heartButton}>
           <Ionicons
             name={isLiked ? "heart" : "heart-outline"}
@@ -193,9 +198,18 @@ const styles = StyleSheet.create({
     borderColor: "#E5E5E5",
   },
   textContainer: {
-    height: 60, // Adjust this value as needed
-    padding: 8,
+    ...Platform.select({
+      android: {
+        height: 60, // Adjust this value as needed
+        padding: 8,
+      },
+      ios: {
+        height: 60, // Adjust this value as needed
+        padding: 8,
+      },
+    }),
   },
+
   image: {
     width: "100%",
     height: 200,
@@ -204,6 +218,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
+    
   },
   author: {
     fontSize: 16,
