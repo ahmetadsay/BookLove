@@ -285,14 +285,14 @@ const ProfilePage = () => {
                 (book, index) => (
                   <View key={index} style={styles.bookContainer}>
                     {/* Modify to include heart icon */}
-                    <TouchableOpacity onPress={() => handleLikeBook(book)}>
+                  
                       <Image
                         source={{
                           uri: book.uri ? book.uri.smallThumbnail : book.image,
                         }}
                         style={styles.bookImage}
                       />
-                    </TouchableOpacity>
+             
                     <Text style={styles.bookTitle}>{book.title}</Text>
                   </View>
                 )

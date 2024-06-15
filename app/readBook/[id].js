@@ -5,6 +5,7 @@ import Navbar from '../../components/navbar';
 import { usePathname } from 'expo-router';
 
 const SCROLL_POSITION_KEY = 'scrollPosition_';
+const CURRENT_PAGE_KEY = 'currentPage_';
 
 const BookReader = () => {
   const pathname = usePathname();
@@ -30,7 +31,7 @@ const BookReader = () => {
         setPageSize(computedPageSize);
         setTotalPages(Math.ceil(text.length / computedPageSize));
 
-        const savedPage = await AsyncStorage.getItem(SCROLL_POSITION_KEY + id);
+        const savedPage = await AsyncStorage.getItem(CURRENT_PAGE_KEY + id);
         if (savedPage !== null) {
           setCurrentPage(parseInt(savedPage, 10));
         }
@@ -51,7 +52,7 @@ const BookReader = () => {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }
       try {
-        await AsyncStorage.setItem(SCROLL_POSITION_KEY + id, page.toString());
+        await AsyncStorage.setItem(CURRENT_PAGE_KEY + id, page.toString());
       } catch (error) {
         console.error('Failed to save current page:', error);
       }
