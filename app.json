@@ -2,7 +2,7 @@
   "expo": {
     "name": "BookLoved",
     "slug": "BookLoved",
-    "version": "1.5",
+    "version": "1.5.1",
     "orientation": "portrait",
     "icon": "./assets/bookLoveIcon.png",
     "userInterfaceStyle": "light",
@@ -33,13 +33,12 @@
         "backgroundColor": "#ffffff"
       },
      
-      "usesCleartextTraffic": true,
       "permissions": [
         "android.permission.CAMERA",
         
       ],
       "package": "com.bookloved.app",
-      "versionCode": 10,
+      "versionCode": 11,
       "googleServicesFile": "./google-services.json",
       
     },
@@ -57,13 +56,6 @@
           "cameraPermission": "Allow BookLoved to use your camera ?"
         }
       ],
-      [
-        "expo-build-properties", {
-          "android":{
-            "usesClearTextTraffic": true
-          }
-        }
-      ]
   
     ],
     "extra": {
