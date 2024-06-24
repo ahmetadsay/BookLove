@@ -9,6 +9,9 @@
     },
     "preview": {
       "distribution": "store",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {}
   },
