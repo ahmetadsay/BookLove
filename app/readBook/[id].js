@@ -21,8 +21,10 @@ const BookReader = () => {
     const fetchContent = async () => {
       try {
         const response = await fetch(`https://www.gutenberg.org/ebooks/${id}.txt.utf-8`);
-        console.log(`https://www.gutenberg.org/ebooks/${id}.txt.utf-8`);
+
+        console.log(response);
         const text = await response.text();
+
         setContent(text);
 
         const { height, width } = Dimensions.get('window');
