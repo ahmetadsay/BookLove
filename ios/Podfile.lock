@@ -18,7 +18,7 @@ PODS:
   - EXJSONUtils (0.13.1)
   - EXManifests (0.14.3):
     - ExpoModulesCore
-  - Expo (51.0.18):
+  - Expo (51.0.20):
     - ExpoModulesCore
   - ExpoAsset (10.0.10):
     - ExpoModulesCore
@@ -30,13 +30,13 @@ PODS:
     - ExpoModulesCore
   - ExpoFileSystem (17.0.1):
     - ExpoModulesCore
-  - ExpoFont (12.0.7):
+  - ExpoFont (12.0.8):
     - ExpoModulesCore
-  - ExpoHead (3.5.17):
+  - ExpoHead (3.5.18):
     - ExpoModulesCore
   - ExpoKeepAwake (13.0.2):
     - ExpoModulesCore
-  - ExpoModulesCore (1.12.18):
+  - ExpoModulesCore (1.12.19):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -84,7 +84,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - EXStructuredHeaders (3.8.0)
-  - EXUpdates (0.25.18):
+  - EXUpdates (0.25.19):
     - DoubleConversion
     - EASClient
     - EXManifests
@@ -1741,19 +1741,19 @@ SPEC CHECKSUMS:
   EXImageLoader: ab589d67d6c5f2c33572afea9917304418566334
   EXJSONUtils: 30c17fd9cc364d722c0946a550dfbf1be92ef6a4
   EXManifests: c1fab4c3237675e7b0299ea8df0bcb14baca4f42
-  Expo: 56b642d0930789fc847dc7f424d2d599dfe59a5e
+  Expo: 0cab4b4dc73f263c0d4297e993686973725adb7f
   ExpoAsset: 323700f291684f110fb55f0d4022a3362ea9f875
   ExpoCamera: c5be8a28a769c4dee3a02e017e5b55415d9beb2c
   ExpoCrypto: 156078f266bf28f80ecf5e2a9c3a0d6ffce07a1c
   ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
-  ExpoFont: 43b69559cef3d773db57c7ae7edd3cb0aa0dc610
-  ExpoHead: 439510c5bec19592d5a0d78860e0cb6c59e28a34
+  ExpoFont: b3630aff6bfb29ae3c261412f0796813a522cca9
+  ExpoHead: 7880300d9c1519420530cf591d333d3f96ff9f6e
   ExpoKeepAwake: 3b8815d9dd1d419ee474df004021c69fdd316d08
-  ExpoModulesCore: b2fa8cc3c12f0ba45a9ae125c0e3bcad04f3fb7b
+  ExpoModulesCore: 0095fc6f64a1c1e2b939da5752f081adcb8fd8d3
   ExpoWebBrowser: 7595ccac6938eb65b076385fd23d035db9ecdc8e
   EXSplashScreen: d8b3c547b9b18a41d80c6f6b274c4c26664febd4
   EXStructuredHeaders: cb8d1f698e144f4c5547b4c4963e1552f5d2b457
-  EXUpdates: 974b7756e4a021159216df12d41ad2a89068a0f4
+  EXUpdates: b0daeda1d530ea236f7ff528fddb320fd4fa7c06
   EXUpdatesInterface: 996527fd7d1a5d271eb523258d603f8f92038f24
   FBLazyVector: 7e977dd099937dc5458851233141583abba49ff2
   Firebase: 91fefd38712feb9186ea8996af6cbdef41473442
@@ -1830,6 +1830,6 @@ SPEC CHECKSUMS:
   Yoga: eed50599a85bd9f6882a9938d118aed6a397db9c
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: 0d833204ca1cb8435cc1823fcf96bd8131a93d89
+PODFILE CHECKSUM: 0efd384f727ddc935d70dc065e2dd2cdacebfc68
 
 COCOAPODS: 1.15.2
