@@ -16,6 +16,7 @@ const BookReader = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const webViewRef = useRef(null);
   const bookUrl = `https://www.gutenberg.org/ebooks/${id}.html.images`;
+  console.log("Book URL:", bookUrl);
 
   useEffect(() => {
     const loadScrollPosition = async () => {
