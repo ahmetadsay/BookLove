@@ -31,7 +31,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "com.bookloved.app",
-      "versionCode": 11,
+      "versionCode": 12,
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -46,7 +46,10 @@
           "cameraPermission": "Allow BookLoved to use your camera ?"
         }
       ],
-      ["expo-build-properties", { "android": { "usesCleartextTraffic": true } }]
+      [
+        "expo-build-properties",
+        { "android": { "targetSdkVersion": 34, "usesCleartextTraffic": true } }
+      ]
     ],
     "extra": {
       "router": {
