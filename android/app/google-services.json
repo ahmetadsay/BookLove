@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:579880523945:android:79e6ff883edb24f6ebb1b8",
         "android_client_info": {
-          "package_name": "com.bookloved.app"
+          "package_name": "com.readbook.app"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "579880523945-kaegu8lfnbgtib555833qgsq5gltidnl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.bookloved.app",
+            "package_name": "com.readbook.app",
             "certificate_hash": "8d620df406f76943b57adc66f5c1afd3e403fd23"
           }
         },
