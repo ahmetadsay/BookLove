@@ -110,7 +110,7 @@ const Login = () => {
     >
       <Image source={require("../assets/home.png")} style={styles.image} />
       <Text style={styles.title}>
-        {applyRandomColor("Welcome to BookLove")}
+        {applyRandomColor("Welcome to readbook")}
       </Text>
       <View style={styles.form}>
         <TextInput

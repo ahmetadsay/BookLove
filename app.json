@@ -21,7 +21,7 @@
         "NSCameraUsageDescription": "Allow BookLoved to use your camera ?",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.bookloved.app",
+      "bundleIdentifier": "com.readbook.app",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -30,7 +30,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.CAMERA"],
-      "package": "com.bookloved.app",
+      "package": "com.readbook.app",
       "versionCode": 12,
       "googleServicesFile": "./google-services.json"
     },
