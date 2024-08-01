@@ -21,7 +21,7 @@
         "NSCameraUsageDescription": "Allow BookLoved to use your camera ?",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.readbook.app",
+      "bundleIdentifier": "org.name.BookLoved",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -30,7 +30,7 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.CAMERA"],
-      "package": "com.readbook.app",
+      "package": "com.bookloved.app",
       "versionCode": 12,
       "googleServicesFile": "./google-services.json"
     },
@@ -48,7 +48,12 @@
       ],
       [
         "expo-build-properties",
-        { "android": { "targetSdkVersion": 34, "usesCleartextTraffic": true } }
+        {
+          "ios": {
+            "useFrameworks": "static"
+          },
+          "android": { "targetSdkVersion": 34, "usesCleartextTraffic": true }
+        }
       ]
     ],
     "extra": {
