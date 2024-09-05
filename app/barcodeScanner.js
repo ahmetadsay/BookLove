@@ -6,7 +6,7 @@ import { Image } from "react-native";
 import { addDoc, collection } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { Camera, useCameraDevices } from "react-native-vision-camera";
+import { CameraView, Camera } from "expo-camera";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function BarCodeScan() {
@@ -16,13 +16,11 @@ export default function BarCodeScan() {
   const [user, setUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
-  const devices = useCameraDevices();
-  const device = devices.back;
 
   useEffect(() => {
     const getCameraPermissions = async () => {
-      const status = await Camera.requestCameraPermission();
-      setHasPermission(status === "authorized");
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
     };
 
     const checkWelcomeMessage = async () => {
@@ -31,12 +29,11 @@ export default function BarCodeScan() {
         setShowWelcomeMessage(true);
       }
     };
-
     getCameraPermissions();
     checkWelcomeMessage();
   }, []);
 
-  const handleBarCodeScanned = async (barcode) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -48,13 +45,12 @@ export default function BarCodeScan() {
 
     setScanned(true);
     try {
-      const bookData = await fetchBookData(barcode.displayValue);
+      const bookData = await fetchBookData(data);
       if (!bookData || !bookData.items || !bookData.items[0]) {
         throw new Error("Invalid book data");
       }
       setBookData(bookData);
       console.log(bookData.items[0]);
-
       const db = getFirestore();
       const image = bookData.items[0].volumeInfo.imageLinks?.smallThumbnail || 
         "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781787550360/classic-book-cover-foiled-journal-9781787550360_xlg.jpg";
@@ -64,7 +60,6 @@ export default function BarCodeScan() {
         image: image,
         userId: currentUser.uid,
       });
-
       alert("Automatically added to your to be read and loved collection!");
     } catch (error) {
       console.error("Error fetching book data: ", error);
@@ -72,36 +67,27 @@ export default function BarCodeScan() {
       alert("Failed to fetch book data. Please try again.");
     }
   };
-
   const handleWelcomeMessageClose = async () => {
     setShowWelcomeMessage(false);
     await AsyncStorage.setItem('hasSeenWelcome', 'true');
   };
-
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.text}>Scan your book's barcode</Text>
-        {device && (
-          <Camera
-            style={StyleSheet.absoluteFillObject}
-            device={device}
-            isActive={!scanned}
-            onInitialized={() => console.log('Camera initialized')}
-            onError={(error) => console.error('Camera error', error)}
-            frameProcessor={(frame) => {
-              // Implement barcode scanning logic here
-              // Call handleBarCodeScanned with the scanned barcode data
-            }}
-          />
-        )}
+        <CameraView
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barCodeTypes: ["ean13"],
+          }}
+          style={StyleSheet.absoluteFillObject}
+        />
         {scanned && (
           <>
             <Button
@@ -125,7 +111,6 @@ export default function BarCodeScan() {
                 <Text style={styles.bookDataTitle}>
                   {bookData.items[0].volumeInfo.title || "No title"}
                 </Text>
-
                 <Text style={styles.bookDataAuthor}>
                   {bookData.items[0].volumeInfo.authors ? bookData.items[0].volumeInfo.authors[0] : "No author"}
                 </Text>
@@ -183,7 +168,6 @@ export default function BarCodeScan() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
