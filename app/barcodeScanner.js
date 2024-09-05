@@ -6,7 +6,7 @@ import { Image } from "react-native";
 import { addDoc, collection } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { CameraView, Camera } from "expo-camera";
+import { Camera, useCameraDevices } from "react-native-vision-camera";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function BarCodeScan() {
@@ -16,11 +16,13 @@ export default function BarCodeScan() {
   const [user, setUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+  const devices = useCameraDevices();
+  const device = devices.back;
 
   useEffect(() => {
     const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      const status = await Camera.requestCameraPermission();
+      setHasPermission(status === "authorized");
     };
 
     const checkWelcomeMessage = async () => {
@@ -34,7 +36,7 @@ export default function BarCodeScan() {
     checkWelcomeMessage();
   }, []);
 
-  const handleBarCodeScanned = async ({ type, data }) => {
+  const handleBarCodeScanned = async (barcode) => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -46,7 +48,7 @@ export default function BarCodeScan() {
 
     setScanned(true);
     try {
-      const bookData = await fetchBookData(data);
+      const bookData = await fetchBookData(barcode.displayValue);
       if (!bookData || !bookData.items || !bookData.items[0]) {
         throw new Error("Invalid book data");
       }
@@ -87,13 +89,19 @@ export default function BarCodeScan() {
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.text}>Scan your book's barcode</Text>
-        <CameraView
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-          barcodeScannerSettings={{
-            barCodeTypes: ["ean13"],
-          }}
-          style={StyleSheet.absoluteFillObject}
-        />
+        {device && (
+          <Camera
+            style={StyleSheet.absoluteFillObject}
+            device={device}
+            isActive={!scanned}
+            onInitialized={() => console.log('Camera initialized')}
+            onError={(error) => console.error('Camera error', error)}
+            frameProcessor={(frame) => {
+              // Implement barcode scanning logic here
+              // Call handleBarCodeScanned with the scanned barcode data
+            }}
+          />
+        )}
         {scanned && (
           <>
             <Button
