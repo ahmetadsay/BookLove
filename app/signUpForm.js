@@ -54,6 +54,27 @@ const SignUpForm = () => {
         setEmailError("Email already in use");
         return;
       }
+
+      const response = await fetch("http://10.0.2.2:3000/send-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+    if (data.success) {
+        console.log("Code sent successfully");
+      }
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("Error sending code:", error);
+        return;
+      }
+
+  
+    
+  
       // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
