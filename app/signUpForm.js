@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -45,7 +46,6 @@ const SignUpForm = () => {
   };
 
   const handleSubmit = async (values) => {
-    const displayName = values.name;
     try {
       const { email, password, gender, name } = values;
 
@@ -62,53 +62,18 @@ const SignUpForm = () => {
       });
 
       const data = await response.json();
-
-    if (data.success) {
-        console.log("Code sent successfully");
-      }
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Error sending code:", error);
-        return;
-      }
-
-  
-    
-  
-      // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      // Update the user profile in Firebase Authentication
-      await updateProfile(userCredential.user, {
-        displayName: name,
-      });
-
-      await userCredential.user.reload();
-
-      // Create a user document in Firestore
-      const docRef = await addDoc(collection(db, "users"), {
-        uid: userCredential.user.uid,
-
-        name: name,
-        email: email,
-        gender: gender,
-      });
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      if (errorCode === "auth/email-already-in-use") {
-        setEmailError("Email already in use");
+      if (data.success) {
+        router.push({
+          pathname: "/verify",
+          query: { email, password, gender, name },
+        });
       } else {
-        console.error("Error adding document: ", error);
+        Alert.alert("Kod gönderilemedi");
       }
-      return;
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      Alert.alert("An error occurred during sign up");
     }
-
-    router.push("/home");
   };
 
   return (
