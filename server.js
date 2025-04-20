@@ -17,7 +17,7 @@ let codes = {};
 app.post("/send-code", async (req, res) => {
   const { email } = req.body;
 
-  const code = Math.floor(100000 + Math.random() * 900000); // 6 haneli
+  const code = Math.floor(100000 + Math.random() * 900000) // 6 haneli
   codes[email] = { code, expires: Date.now() + 5 * 60 * 1000 }; // 5 dk geçerli
 
   try {
@@ -44,15 +44,18 @@ app.post("/verify-code", (req, res) => {
   }
 
   if (Date.now() > entry.expires) {
+    console.log("Kodun süresi doldu:", entry)
     return res.status(400).json({ success: false, message: "Kodun süresi doldu." });
   }
 
   if (String(entry.code) !== String(code)) {
+    console.log("Kod eşleşmiyor:", entry.code, code);
     return res.status(400).json({ success: false, message: "Kod yanlış." });
   }
 
   // Doğrulandı
   delete codes[email]; // Tek seferlik kod
+  console.log("Kod doğrulandı ve silindi:", email);
 
   res.json({ success: true, message: "Kod doğrulandı." });
 });
