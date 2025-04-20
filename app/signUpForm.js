@@ -23,6 +23,9 @@ import { auth, db, getUserByEmail, getAuth } from "../firebase/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import SelectDropdown from "react-native-select-dropdown";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams } from "expo-router";
+
 
 const signUpSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -48,25 +51,24 @@ const SignUpForm = () => {
   const handleSubmit = async (values) => {
     try {
       const { email, password, gender, name } = values;
-
+  
       const existingUserMethods = await fetchSignInMethodsForEmail(auth, email);
       if (existingUserMethods.length > 0) {
         setEmailError("Email already in use");
         return;
       }
-
+  
       const response = await fetch("http://10.0.2.2:3000/send-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-
+  
       const data = await response.json();
       if (data.success) {
-        router.push({
-          pathname: "/verify",
-          query: { email, password, gender, name },
-        });
+        const payload = { email, password, gender, name };
+        await AsyncStorage.setItem("signupData", JSON.stringify(payload));
+        router.push("/verify");
       } else {
         Alert.alert("Kod gönderilemedi");
       }
@@ -75,6 +77,7 @@ const SignUpForm = () => {
       Alert.alert("An error occurred during sign up");
     }
   };
+  
 
   return (
     <View style={styles.container}>

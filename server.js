@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -11,14 +10,18 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 app.use(cors());
 app.use(bodyParser.json());
 
-// Geçici olarak hafızada tutalım (production için veritabanı kullan)
 let codes = {};
 
 app.post("/send-code", async (req, res) => {
-  const { email } = req.body;
+  console.log("📤 GÖNDERİLEN kod:", code, "→", email);
+  console.log("📋 Tüm kayıtlı kodlar:", codes);
 
-  const code = Math.floor(100000 + Math.random() * 900000) // 6 haneli
+  const email = req.body.email?.toLowerCase().trim();
+  const code = Math.floor(100000 + Math.random() * 900000); // 6 haneli
+
   codes[email] = { code, expires: Date.now() + 5 * 60 * 1000 }; // 5 dk geçerli
+
+  console.log("📤 GÖNDERİLEN kod:", code, "→", email);
 
   try {
     await resend.emails.send({
@@ -30,34 +33,45 @@ app.post("/send-code", async (req, res) => {
 
     res.json({ success: true, message: "Kod gönderildi." });
   } catch (err) {
-    console.error(err);
+    console.error("❌ E-posta gönderilemedi:", err);
     res.status(500).json({ success: false, message: "E-posta gönderilemedi." });
   }
 });
 
 app.post("/verify-code", (req, res) => {
-  const { email, code } = req.body;
+  const email = req.body.email?.toLowerCase().trim();
+  const code = req.body.code?.toString().trim();
+
   const entry = codes[email];
+  console.log("📥 DOĞRULAMA gelen email:", email);
+console.log("📥 DOĞRULAMA gelen kod:", code);
+console.log("📋 Tüm kayıtlı kodlar:", codes);
+
+  console.log("📥 DOĞRULAMA gelen email:", email);
+  console.log("📥 DOĞRULAMA gelen kod:", code);
+  console.log("🗃️  KAYITLI kod:", entry?.code);
+  console.log("🕒 KOD GEÇERLİLİK:", entry?.expires, "Şu an:", Date.now());
 
   if (!entry) {
     return res.status(400).json({ success: false, message: "Kod bulunamadı." });
   }
 
   if (Date.now() > entry.expires) {
-    console.log("Kodun süresi doldu:", entry)
-    return res.status(400).json({ success: false, message: "Kodun süresi doldu." });
+    console.log("⚠️ Kodun süresi dolmuş.");
+    return res
+      .status(400)
+      .json({ success: false, message: "Kodun süresi doldu." });
   }
 
-  if (String(entry.code) !== String(code)) {
-    console.log("Kod eşleşmiyor:", entry.code, code);
+  if (entry.code.toString() !== code) {
+    console.log("❌ Kod eşleşmiyor:", entry.code.toString(), code);
     return res.status(400).json({ success: false, message: "Kod yanlış." });
   }
 
-  // Doğrulandı
-  delete codes[email]; // Tek seferlik kod
-  console.log("Kod doğrulandı ve silindi:", email);
+  console.log("✅ Kod doğrulandı:", email);
+  delete codes[email]; // Tek seferlik
 
   res.json({ success: true, message: "Kod doğrulandı." });
 });
 
-app.listen(3000, () => console.log("Server 3000 portunda çalışıyor"));
+app.listen(3000, () => console.log("🚀 Server 3000 portunda çalışıyor"));
