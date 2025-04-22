@@ -47,7 +47,7 @@ export default function VerifyScreen() {
     const formattedCode = code?.toString().trim();
 
     try {
-      const response = await fetch("http://10.0.2.2:3000/verify-code", {
+      const response = await fetch("https://booklove-kbyb.onrender.com/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

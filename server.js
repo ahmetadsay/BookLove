@@ -74,4 +74,11 @@ console.log("📋 Tüm kayıtlı kodlar:", codes);
   res.json({ success: true, message: "Kod doğrulandı." });
 });
 
-app.listen(3000, () => console.log("🚀 Server 3000 portunda çalışıyor"));
+app.get("/", (req, res) => {
+  res.send("E-posta doğrulama sunucusu çalışıyor.");
+}
+);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Sunucu ${PORT} portunda çalışıyor.`);
+});
