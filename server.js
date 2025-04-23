@@ -43,14 +43,7 @@ app.post("/verify-code", (req, res) => {
   const code = req.body.code?.toString().trim();
 
   const entry = codes[email];
-  console.log("📥 DOĞRULAMA gelen email:", email);
-console.log("📥 DOĞRULAMA gelen kod:", code);
-console.log("📋 Tüm kayıtlı kodlar:", codes);
 
-  console.log("📥 DOĞRULAMA gelen email:", email);
-  console.log("📥 DOĞRULAMA gelen kod:", code);
-  console.log("🗃️  KAYITLI kod:", entry?.code);
-  console.log("🕒 KOD GEÇERLİLİK:", entry?.expires, "Şu an:", Date.now());
 
   if (!entry) {
     return res.status(400).json({ success: false, message: "Kod bulunamadı." });
@@ -79,6 +72,7 @@ app.get("/", (req, res) => {
 }
 );
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Sunucu ${PORT} portunda çalışıyor.`);
+  console.log(`🚀 Sunucu ${PORT} portunda çalışıyor.`);
 });
