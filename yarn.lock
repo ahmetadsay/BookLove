@@ -2745,10 +2745,10 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-firebase/app@^21.13.0", "@react-native-firebase/app@21.13.0":
-  version "21.13.0"
-  resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-21.13.0.tgz"
-  integrity sha512-UjM+yTTuBTQkGQHSTmJtKoXumgWxN+G90q6TCBqf2fQzAGhWpeMQSKOpD3arW+gmmO2eNIb1P8wyMYQk9GeGVA==
+"@react-native-firebase/app@^21.14.0", "@react-native-firebase/app@21.13.0":
+  version "21.14.0"
+  resolved "https://registry.npmjs.org/@react-native-firebase/app/-/app-21.14.0.tgz"
+  integrity sha512-vBNfn7PoQrZfANLJnJiWZSHVu7WG6hjM5w3MDfmG8DLdr8VsAVBUgsn8lGpqobSuno1vTgwDIhR8PYZjMGsuvg==
   dependencies:
     firebase "11.3.1"
 

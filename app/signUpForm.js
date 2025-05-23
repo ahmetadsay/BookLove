@@ -23,8 +23,6 @@ import { auth, db, getUserByEmail, getAuth } from "../firebase/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import SelectDropdown from "react-native-select-dropdown";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLocalSearchParams } from "expo-router";
 
 
 const signUpSchema = Yup.object().shape({
@@ -48,35 +46,53 @@ const SignUpForm = () => {
     router.back();
   };
 
-  const handleSubmit = async (values) => {
+ const handleSubmit = async (values) => {
+    const displayName = values.name;
+
     try {
       const { email, password, gender, name } = values;
-  
+
       const existingUserMethods = await fetchSignInMethodsForEmail(auth, email);
       if (existingUserMethods.length > 0) {
         setEmailError("Email already in use");
         return;
       }
-  
-      const response = await fetch("http://10.0.2.2:3000/send-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+      // Create the user in Firebase Authentication displayName is the name of the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update the user profile in Firebase Authentication
+      await updateProfile(userCredential.user, {
+        displayName: name,
       });
-  
-      const data = await response.json();
-      if (data.success) {
-        const payload = { email, password, gender, name };
-        await AsyncStorage.setItem("signupData", JSON.stringify(payload));
-        router.push("/verify");
-      } else {
-        Alert.alert("Kod gönderilemedi");
-      }
+
+      await userCredential.user.reload();
+
+      // Create a user document in Firestore
+      const docRef = await addDoc(collection(db, "users"), {
+        uid: userCredential.user.uid,
+
+        name: name,
+        email: email,
+        gender: gender,
+      });
+
+      router.push("/home");
     } catch (error) {
-      console.error("Error during sign up:", error);
-      Alert.alert("An error occurred during sign up");
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      if (errorCode === "auth/email-already-in-use") {
+        setEmailError("Email already in use");
+      } else {
+        console.error("Error adding document: ", error);
+      }
+      return;
     }
   };
+
   
 
   return (
